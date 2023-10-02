@@ -9,7 +9,7 @@ type mullvad_status = {
   country : string;
 }
 
-let capture_stdout command =
+let execute_command command =
   let in_channel = Unix.open_process_in command in
   let rec read_lines acc =
     try
@@ -29,7 +29,7 @@ let remove_parentheses str =
   else str
 
 let get_mullvad_status () =
-  let out_lines = capture_stdout "mullvad status -v" in
+  let out_lines = execute_command "mullvad status -v" in
 
   let frags1 = out_lines.(0) |> String.split_on_char ' ' in
 
