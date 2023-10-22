@@ -1,0 +1,4 @@
+(library
+ (name mullx)
+ (public_name mullx)
+ (libraries unix str))

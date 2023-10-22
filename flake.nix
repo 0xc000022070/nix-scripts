@@ -26,11 +26,11 @@
           cliphist-rofi = ./cliphist-rofi;
           swww-switcher = ./swww-switcher;
           spotify-dbus = ./spotify-dbus;
-          mullman = ./mullman;
+          mullx = ./mullx;
         };
       in
         {
-          default = self.packages.${system}.mullman;
+          default = self.packages.${system}.mullx;
         }
         // lib.attrsets.mapAttrs (_n: p: pkgs.callPackage p {inherit pkgs;}) entries);
     };

@@ -1,7 +1,7 @@
 {pkgs ? import <nixpkgs> {}}:
 with pkgs;
   ocamlPackages.buildDunePackage rec {
-    pname = "mullman";
+    pname = "mullx";
     version = "unstable";
 
     src = builtins.path {

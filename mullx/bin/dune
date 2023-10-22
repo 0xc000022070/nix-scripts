@@ -1,0 +1,4 @@
+(executable
+ (public_name mullx)
+ (name main)
+ (libraries mullx))
