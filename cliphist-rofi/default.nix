@@ -1,4 +1,4 @@
-{pkgs ? import <nixpkgs> {}}: let
+{pkgs ? import <nixpkgs> {}, ...}: let
   runtimePackages = [pkgs.cliphist];
 in
   pkgs.stdenv.mkDerivation rec {

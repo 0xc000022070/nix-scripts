@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs";
+    poetry2nix.url = "github:nix-community/poetry2nix";
     systems.url = "github:nix-systems/default-linux";
   };
 
@@ -31,6 +32,11 @@
         {
           default = self.packages.${system}.dunstify-sound;
         }
-        // lib.attrsets.mapAttrs (_n: p: pkgs.callPackage p {inherit pkgs;}) entries);
+        // lib.attrsets.mapAttrs (_n: p:
+          pkgs.callPackage p {
+            inherit (poetry2nix.packages) poetry2nix;
+            inherit pkgs;
+          })
+        entries);
     };
 }

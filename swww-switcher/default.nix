@@ -1,10 +1,12 @@
-{pkgs ? import <nixpkgs> {}}: let
-  inherit (pkgs) poetry2nix;
-in
-  poetry2nix.mkPoetryApplication {
-    python = pkgs.python311;
+{
+  poetry2nix,
+  pkgs,
+  ...
+}:
+poetry2nix.mkPoetryApplication {
+  python = pkgs.python311;
 
-    projectDir = ./.;
-    pyproject = ./pyproject.toml;
-    poetrylock = ./poetry.lock;
-  }
+  projectDir = ./.;
+  pyproject = ./pyproject.toml;
+  poetrylock = ./poetry.lock;
+}

@@ -4,6 +4,7 @@ in
   {
     pkgs ? import <nixpkgs> {},
     barColor ? defaultBarColor,
+    ...
   }
   : let
     runtimePackages = with pkgs; [

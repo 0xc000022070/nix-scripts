@@ -1,4 +1,4 @@
-{pkgs ? import <nixpkgs> {}}:
+{pkgs ? import <nixpkgs> {}, ...}:
 with pkgs;
   ocamlPackages.buildDunePackage rec {
     pname = "mullx";

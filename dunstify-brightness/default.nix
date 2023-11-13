@@ -1,4 +1,4 @@
-{pkgs ? import <nixpkgs> {}}: let
+{pkgs ? import <nixpkgs> {}, ...}: let
   runtimePackages = with pkgs; [
     brightnessctl
     dunst
