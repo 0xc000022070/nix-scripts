@@ -8,7 +8,6 @@ in
   : let
     runtimePackages = with pkgs; [
       pulseaudio
-      alsa-utils
       dunst
     ];
   in
