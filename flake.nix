@@ -1,11 +1,10 @@
 {
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs";
     systems.url = "github:nix-systems/default-linux";
   };
 
   outputs = inputs:
-  # inputs @ {self, ...}:
     with inputs; let
       inherit (nixpkgs) lib;
 
@@ -30,7 +29,7 @@
         };
       in
         {
-          default = self.packages.${system}.mullx;
+          default = self.packages.${system}.dunstify-sound;
         }
         // lib.attrsets.mapAttrs (_n: p: pkgs.callPackage p {inherit pkgs;}) entries);
     };
