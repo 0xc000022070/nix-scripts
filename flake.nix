@@ -21,6 +21,7 @@
 
         entries = {
           dunstify-brightness = ./dunstify-brightness;
+          battery-notifier = ./battery-notifier;
           dunstify-sound = ./dunstify-sound;
           screen-capture = ./screen-capture;
           cliphist-rofi = ./cliphist-rofi;
