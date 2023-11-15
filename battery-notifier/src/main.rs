@@ -39,8 +39,6 @@ fn main() {
             .expect("Read battery capacity file")
             .replace("\n", "");
 
-        println!("{}", raw_capacity);
-
         let capacity: u8 = raw_capacity
             .parse::<u8>()
             .expect("BAT1 capacity file doesn't contains a number");
@@ -49,10 +47,14 @@ fn main() {
             .expect("Read battery status file")
             .replace("\n", "");
 
+        println!("[DEBUG] Current capacity: {} Status: {}", capacity, status);
+
         if status == "Discharging" || status == "Not charging" {
             let default_content = format!("Charge: {}%", capacity);
 
             let mut notify_capacity = |urgency: Urgency, title: &str, content: &str, icon: &str| {
+                println!("[DEBUG] Last notified capacity: {}", last_notified_capacity);
+
                 if last_notified_capacity != capacity {
                     last_notified_capacity = capacity;
 
@@ -66,8 +68,7 @@ fn main() {
             };
 
             match capacity {
-                60 => notify_capacity(
-                    // 30
+                30 => notify_capacity(
                     Urgency::LOW,
                     "Battery somewhat low",
                     &default_content,
