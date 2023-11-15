@@ -31,11 +31,11 @@
         };
       in
         {
-          default = self.packages.${system}.dunstify-sound;
+          default = self.packages.${system}.swww-switcher;
         }
         // lib.attrsets.mapAttrs (_n: p:
           pkgs.callPackage p {
-            inherit (poetry2nix.packages) poetry2nix;
+            inherit (poetry2nix.lib.mkPoetry2Nix {inherit pkgs;}) mkPoetryApplication;
             inherit pkgs;
           })
         entries);

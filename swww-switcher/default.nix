@@ -1,9 +1,9 @@
 {
-  poetry2nix,
+  mkPoetryApplication,
   pkgs,
   ...
 }:
-poetry2nix.mkPoetryApplication {
+mkPoetryApplication {
   python = pkgs.python311;
 
   projectDir = ./.;
