@@ -1,4 +1,5 @@
 use core::fmt;
+use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{
     env, fs,
     io::{self, Error},
@@ -49,7 +50,11 @@ fn main() {
 
         println!("[DEBUG] Current capacity: {} Status: {}", capacity, status);
 
-        if status == "Discharging" || status == "Not charging" {
+        if status == "Charging" {
+            println!("[DEBUG] Since the battery is charging, the last notified capacity will be restarted to 0 (it was {})", last_notified_capacity);
+
+            last_notified_capacity = 0
+        } else if status == "Discharging" || status == "Not charging" {
             let default_content = format!("Charge: {}%", capacity);
 
             let mut notify_capacity = |urgency: Urgency, title: &str, content: &str, icon: &str| {
@@ -83,7 +88,11 @@ fn main() {
                 5 => notify_capacity(
                     Urgency::CRITICAL,
                     "Battery very low",
-                    format!("{}.\nYour computer will shut down soon", default_content).as_str(),
+                    format!(
+                        "{}.\n\nYour computer will shut down soon! You'll regret this!",
+                        default_content
+                    )
+                    .as_str(),
                     BATTERY_DANGER_PATH,
                 ),
                 _ => (),
@@ -95,8 +104,17 @@ fn main() {
 }
 
 fn notify(urgency_level: Urgency, title: &str, content: &str, icon: &str) -> io::Result<Output> {
+    let mut wav = Wav::default();
+
+    match wav.load_mem(include_bytes!("./../assets/low-battery.mp3")) {
+        Ok(r) => println!("[DEBUG] Sound file has been loaded: {:#?}", r),
+        Err(error) => println!("[WARN] Couldn't load sound file: {}", error.to_string()),
+    };
+
+    let result: io::Result<Output>;
+
     if is_program_in_path(DUNSTIFY) {
-        return Command::new(DUNSTIFY)
+        result = Command::new(DUNSTIFY)
             .arg(format!("--urgency={}", urgency_level.to_string()))
             .arg("--appname=battery-notifier")
             .arg("--hints=string:x-dunst-stack-tag:battery")
@@ -105,19 +123,34 @@ fn notify(urgency_level: Urgency, title: &str, content: &str, icon: &str) -> io:
             .arg(content)
             .output();
     } else if is_program_in_path(NOTIFY_SEND) {
-        return Command::new(NOTIFY_SEND)
+        result = Command::new(NOTIFY_SEND)
             .arg(format!("--urgency={}", urgency_level.to_string()))
             .arg(format!("--icon={}", icon))
             .arg(title)
             .arg(content)
             .output();
+    } else {
+        let err = Error::new(
+            io::ErrorKind::NotFound,
+            "neither notify-send or dunstify were found in $PATH",
+        );
+        return Result::Err(err);
     }
 
-    let err = Error::new(
-        io::ErrorKind::NotFound,
-        "neither notify-send or dunstify were found in $PATH",
-    );
-    return Result::Err(err);
+    match Soloud::default() {
+        Ok(sl) => {
+            sl.play(&wav);
+            while sl.voice_count() > 0 {
+                thread::sleep(time::Duration::from_millis(100));
+            }
+        }
+        Err(error) => println!(
+            "[ERROR] soloud instance couldn't be correctly initialized: {}",
+            error.to_string()
+        ),
+    }
+
+    return result;
 }
 
 fn is_program_in_path(program_name: &str) -> bool {
