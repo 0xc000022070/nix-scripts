@@ -21,6 +21,14 @@ enum Urgency {
     LOW,
 }
 
+#[derive(PartialEq)]
+enum BatteryNotificationLevel {
+    NoConflict,
+    Reminder,
+    Warn,
+    Threat,
+}
+
 impl fmt::Display for Urgency {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -31,9 +39,20 @@ impl fmt::Display for Urgency {
     }
 }
 
+impl fmt::Display for BatteryNotificationLevel {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            BatteryNotificationLevel::NoConflict => write!(f, "no conflict(0)"),
+            BatteryNotificationLevel::Reminder => write!(f, "reminder(1)"),
+            BatteryNotificationLevel::Warn => write!(f, "warn(2)"),
+            BatteryNotificationLevel::Threat => write!(f, "threat(3)"),
+        }
+    }
+}
+
 fn main() {
     let sleep_time = time::Duration::from_millis(700); // 0.7s
-    let mut last_notified_capacity: u8 = 0;
+    let mut last_notification_level = BatteryNotificationLevel::NoConflict;
 
     loop {
         let raw_capacity: String = fs::read_to_string(BATTERY_CAPACITY_PATH)
@@ -50,42 +69,45 @@ fn main() {
 
         println!("[DEBUG] Current capacity: {} Status: {}", capacity, status);
 
-        if status == "Charging" {
-            println!("[DEBUG] Since the battery is charging, the last notified capacity will be restarted to 0 (it was {})", last_notified_capacity);
+        if status == "Charging" && last_notification_level != BatteryNotificationLevel::NoConflict {
+            println!("[DEBUG] Since the battery is charging, the last notified capacity will be restarted to 0 (it was {})", last_notification_level);
 
-            last_notified_capacity = 0
+            last_notification_level = BatteryNotificationLevel::NoConflict
         } else if status == "Discharging" || status == "Not charging" {
             let default_content = format!("Charge: {}%", capacity);
 
-            let mut notify_capacity = |urgency: Urgency, title: &str, content: &str, icon: &str| {
-                println!("[DEBUG] Last notified capacity: {}", last_notified_capacity);
+            let mut notify_capacity = |urgency: Urgency, title: &str, content: &str| {
+                let current_notification_level = get_notification_level(capacity);
 
-                if last_notified_capacity != capacity {
-                    last_notified_capacity = capacity;
+                println!(
+                    "[DEBUG] Last notification level: {}, Current notification level: {}",
+                    last_notification_level, current_notification_level
+                );
 
-                    match notify(urgency, title, content, icon) {
+                if last_notification_level != current_notification_level {
+                    last_notification_level = current_notification_level;
+
+                    match send_desktop_notification(urgency, title, content) {
                         Ok(r) => println!("[DEBUG] Battery notification: {:#?}", r),
                         Err(error) => {
                             println!("[ERROR] Battery notification: {}", error.to_string())
                         }
                     };
+
+                    send_sound_notification()
                 }
             };
 
-            match capacity {
-                30 => notify_capacity(
-                    Urgency::LOW,
-                    "Battery somewhat low",
-                    &default_content,
-                    BATTERY_DANGER_PATH,
-                ),
-                15 => notify_capacity(
+            match get_notification_level(capacity) {
+                BatteryNotificationLevel::Reminder => {
+                    notify_capacity(Urgency::LOW, "Battery somewhat low", &default_content)
+                }
+                BatteryNotificationLevel::Warn => notify_capacity(
                     Urgency::NORMAL,
                     "Battery low",
                     format!("{}.\nPlease connect your laptop", default_content).as_str(),
-                    BATTERY_DANGER_PATH,
                 ),
-                5 => notify_capacity(
+                BatteryNotificationLevel::Threat => notify_capacity(
                     Urgency::CRITICAL,
                     "Battery very low",
                     format!(
@@ -93,7 +115,6 @@ fn main() {
                         default_content
                     )
                     .as_str(),
-                    BATTERY_DANGER_PATH,
                 ),
                 _ => (),
             }
@@ -103,29 +124,32 @@ fn main() {
     }
 }
 
-fn notify(urgency_level: Urgency, title: &str, content: &str, icon: &str) -> io::Result<Output> {
-    let mut wav = Wav::default();
+// Calculates the notification level based on the provided battery capacity.
+fn get_notification_level(capacity: u8) -> BatteryNotificationLevel {
+    match capacity {
+        16..=30 => BatteryNotificationLevel::Reminder,
+        6..=15 => BatteryNotificationLevel::Warn,
+        1..=5 => BatteryNotificationLevel::Threat,
+        _ => BatteryNotificationLevel::NoConflict,
+    }
+}
 
-    match wav.load_mem(include_bytes!("./../assets/low-battery.mp3")) {
-        Ok(r) => println!("[DEBUG] Sound file has been loaded: {:#?}", r),
-        Err(error) => println!("[WARN] Couldn't load sound file: {}", error.to_string()),
-    };
-
+fn send_desktop_notification(urgency: Urgency, title: &str, content: &str) -> io::Result<Output> {
     let result: io::Result<Output>;
 
     if is_program_in_path(DUNSTIFY) {
         result = Command::new(DUNSTIFY)
-            .arg(format!("--urgency={}", urgency_level.to_string()))
+            .arg(format!("--urgency={}", urgency.to_string()))
             .arg("--appname=battery-notifier")
             .arg("--hints=string:x-dunst-stack-tag:battery")
-            .arg(format!("--icon={}", icon))
+            .arg(format!("--icon={}", BATTERY_DANGER_PATH))
             .arg(title)
             .arg(content)
             .output();
     } else if is_program_in_path(NOTIFY_SEND) {
         result = Command::new(NOTIFY_SEND)
-            .arg(format!("--urgency={}", urgency_level.to_string()))
-            .arg(format!("--icon={}", icon))
+            .arg(format!("--urgency={}", urgency.to_string()))
+            .arg(format!("--icon={}", BATTERY_DANGER_PATH))
             .arg(title)
             .arg(content)
             .output();
@@ -137,11 +161,26 @@ fn notify(urgency_level: Urgency, title: &str, content: &str, icon: &str) -> io:
         return Result::Err(err);
     }
 
-    match Soloud::default() {
+    result
+}
+
+fn send_sound_notification() {
+    let rsl = Soloud::default();
+
+    match rsl {
         Ok(sl) => {
+            let mut wav = Wav::default();
+
+            match wav.load_mem(include_bytes!("./../assets/low-battery.mp3")) {
+                Ok(r) => println!("[DEBUG] Sound file has been loaded: {:#?}", r),
+                Err(error) => {
+                    println!("[WARN] Couldn't load sound file: {}", error.to_string())
+                }
+            };
+
             sl.play(&wav);
             while sl.voice_count() > 0 {
-                thread::sleep(time::Duration::from_millis(100));
+                thread::sleep(time::Duration::from_millis(500));
             }
         }
         Err(error) => println!(
@@ -149,8 +188,6 @@ fn notify(urgency_level: Urgency, title: &str, content: &str, icon: &str) -> io:
             error.to_string()
         ),
     }
-
-    return result;
 }
 
 fn is_program_in_path(program_name: &str) -> bool {
