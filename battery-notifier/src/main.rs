@@ -154,7 +154,7 @@ fn main() {
 // Calculates the notification level based on the provided battery capacity.
 fn get_notification_level(capacity: u8) -> BatteryNotificationLevel {
     match capacity {
-        16..=60 => BatteryNotificationLevel::Reminder,
+        16..=30 => BatteryNotificationLevel::Reminder,
         6..=15 => BatteryNotificationLevel::Warn,
         1..=5 => BatteryNotificationLevel::Threat,
         _ => BatteryNotificationLevel::NoConflict,
