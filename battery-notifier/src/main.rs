@@ -176,7 +176,7 @@ fn send_desktop_notification(urgency: Urgency, title: &str, content: &str) -> io
     } else if is_program_in_path(NOTIFY_SEND) {
         result = Command::new(NOTIFY_SEND)
             .arg(format!("--urgency={}", urgency.to_string()))
-            .arg(format!("--hints={}", APP_NOTIFICATION_ID))
+            .arg(format!("--hint={}", APP_NOTIFICATION_ID))
             .arg(format!("--icon={}", BATTERY_DANGER_PATH))
             .arg(title)
             .arg(content)
