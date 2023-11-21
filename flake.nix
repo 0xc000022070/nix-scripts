@@ -22,6 +22,7 @@
         entries = {
           dunstify-brightness = ./dunstify-brightness;
           battery-notifier = ./battery-notifier;
+          playerctl-waybar = ./playerctl-waybar;
           dunstify-sound = ./dunstify-sound;
           screen-capture = ./screen-capture;
           cliphist-rofi = ./cliphist-rofi;
@@ -31,7 +32,7 @@
         };
       in
         {
-          default = self.packages.${system}.swww-switcher;
+          default = self.packages.${system}.playerctl-waybar;
         }
         // lib.attrsets.mapAttrs (_n: p:
           pkgs.callPackage p {
