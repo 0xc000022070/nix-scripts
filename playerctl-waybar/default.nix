@@ -16,4 +16,8 @@ mkPoetryApplication {
     playerctl
     cairo
   ];
+
+  postInstall = ''
+    mv $out/bin/cli $out/bin/playerctl-waybar
+  '';
 }
