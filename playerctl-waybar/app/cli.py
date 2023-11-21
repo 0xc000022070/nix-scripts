@@ -16,9 +16,9 @@ import sys
 import signal
 from typing import List
 
-from gi.repository import Playerctl, GLib
 import gi
 gi.require_version("Playerctl", "2.0")
+from gi.repository import Playerctl, GLib
 
 logger = logging.getLogger(__name__)
 
