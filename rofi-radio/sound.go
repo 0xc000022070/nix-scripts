@@ -41,7 +41,7 @@ func killOtherBeatProcesses() error {
 		}
 
 		if n == PROGRAM_NAME && p.Pid != currentPid {
-			if err := p.Terminate(); err != nil {
+			if err := p.SendSignal(syscall.SIGINT); err != nil {
 				return err
 			}
 		}
@@ -50,17 +50,15 @@ func killOtherBeatProcesses() error {
 	return nil
 }
 
-func recursiveKill(process *process.Process) error {
-	children, err := process.Children()
-	if err == nil {
-		for _, p := range children {
-			if err := recursiveKill(p); err != nil {
-				return err
-			}
-		}
-	}
+// func recursiveKill(process *process.Process) error {
+// 	children, err := process.Children()
+// 	if err == nil {
+// 		for _, p := range children {
+// 			if err := recursiveKill(p); err != nil {
+// 				return err
+// 			}
+// 		}
+// 	}
 
-	return process.SendSignal(syscall.SIGINT)
-
-	return process.Kill()
-}
+// 	return process.SendSignal(syscall.SIGINT)
+// }
