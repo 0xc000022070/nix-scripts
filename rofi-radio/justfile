@@ -1,0 +1,3 @@
+
+run:
+    @ROFI_RADIO_CFG=./config.json go run .
