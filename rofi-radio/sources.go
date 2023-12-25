@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/goccy/go-json"
+	"github.com/samber/lo"
 )
 
 type BeatSource struct {
@@ -71,4 +72,14 @@ func getSourcesFilePath() string {
 	}
 
 	return filepath.Join(configDirPath, "sources.json")
+}
+
+func getBeatNames(sources []BeatSource) []string {
+	return lo.Map(sources, func(source BeatSource, i int) string {
+		if source.Name != "" {
+			return source.Name
+		}
+
+		return fmt.Sprintf("Beat %d", i+1)
+	})
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 
 	"github.com/shirou/gopsutil/v3/process"
@@ -19,7 +20,8 @@ func playBeat(ctx context.Context, source BeatSource) error {
 
 	cmd := exec.CommandContext(ctx, p, source.CmdArgs()...)
 
-	if err := cmd.Run(); err != nil {
+	err = cmd.Run()
+	if err != nil && !strings.Contains(err.Error(), "signal:") {
 		return fmt.Errorf("error running mpv command: %w", err)
 	}
 
