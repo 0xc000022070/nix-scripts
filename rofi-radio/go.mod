@@ -6,6 +6,7 @@ require (
 	github.com/goccy/go-json v0.10.2
 	github.com/samber/lo v1.39.0
 	github.com/shirou/gopsutil/v3 v3.23.11
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

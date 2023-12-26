@@ -19,12 +19,12 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
 	defer stop()
 
-	sources, err := LoadSources()
+	config, err := loadConfig()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("config error: %s", err.Error())
 	}
 
-	selectedBeat, err := showMenu(ctx, sources, "", "", "")
+	selectedBeat, err := showMenu(ctx, config)
 	if err != nil {
 		log.Fatal(err)
 	}

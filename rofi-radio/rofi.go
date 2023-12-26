@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -15,23 +16,11 @@ var (
 	errRofiUnknownOutput = errors.New("child rofi process returned an unexpected output")
 )
 
-func showMenu(ctx context.Context, sources []BeatSource, configPath, stylePath, colorsPath string) (BeatSource, error) {
-	cmdArgs := []string{
-		"-dmenu",
-		// "--conf", configPath,
-		// "--style", stylePath,
-		// "--color", colorsPath,
-		"--width", "350",
-		"--height", "380",
-		"--cache-file", "/dev/null",
-		"--hide-scroll", "--no-actions",
-		// "--define=matching=fuzzy",
-	}
-
-	beats := getBeatNames(sources)
+func showMenu(ctx context.Context, config Config) (BeatSource, error) {
+	beats := getBeatNames(config.Beats)
 
 	echo := exec.CommandContext(ctx, "echo", strings.Join(beats, "\n"))
-	rofi := exec.CommandContext(ctx, "rofi", cmdArgs...)
+	rofi := exec.CommandContext(ctx, "rofi", getRofiCmdArgs(config)...)
 
 	var b bytes.Buffer
 
@@ -71,9 +60,48 @@ func showMenu(ctx context.Context, sources []BeatSource, configPath, stylePath, 
 
 	for i, beat := range beats {
 		if beat == selectionOption {
-			return sources[i], nil
+			return config.Beats[i], nil
 		}
 	}
 
 	return BeatSource{}, errRofiUnknownOutput
+}
+
+func getRofiCmdArgs(config Config) []string {
+	args := []string{
+		"-dmenu",
+		// "--conf", configPath,
+		// "--style", stylePath,
+		// "--color", colorsPath,
+		"-cache-file", "/dev/null",
+		"-hide-scroll", "--no-actions",
+		"-modi", PROGRAM_NAME,
+		// "--define=matching=fuzzy",
+	}
+
+	if config.Window.Height != nil {
+		args = append(args, "-height", strconv.Itoa(*config.Window.Height))
+	} else {
+		args = append(args, "-height", "350")
+	}
+
+	if config.Window.Width != nil {
+		args = append(args, "-width", strconv.Itoa(*config.Window.Width))
+	} else {
+		args = append(args, "-width", "380")
+	}
+
+	if config.Window.XOffset != nil {
+		args = append(args, "-xoffset", strconv.Itoa(*config.Window.XOffset))
+	}
+
+	if config.Window.YOffset != nil {
+		args = append(args, "-yoffset", strconv.Itoa(*config.Window.YOffset))
+	}
+
+	if config.Window.Location != nil {
+		args = append(args, "-location", strconv.Itoa(*config.Window.Location))
+	}
+
+	return args
 }

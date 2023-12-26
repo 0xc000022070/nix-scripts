@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/goccy/go-json"
@@ -11,9 +10,9 @@ import (
 )
 
 type BeatSource struct {
-	Name    string `json:"name"`
-	URL     string `json:"url"`
-	Shuffle bool   `json:"shuffle"`
+	Name    string `yaml:"name"`
+	URL     string `yaml:"url"`
+	Shuffle bool   `yaml:"shuffle"`
 }
 
 func (bs BeatSource) CmdArgs() []string {
@@ -28,8 +27,8 @@ func (bs BeatSource) CmdArgs() []string {
 	return args
 }
 
-func LoadSources() ([]BeatSource, error) {
-	fp := getSourcesFilePath()
+func LoadSources(sourcesFilePath string) ([]BeatSource, error) {
+	fp := sourcesFilePath
 
 	info, err := os.Stat(fp)
 	if err != nil {
@@ -59,19 +58,6 @@ func LoadSources() ([]BeatSource, error) {
 	}
 
 	return sources, nil
-}
-
-func getSourcesFilePath() string {
-	if s := os.Getenv("ROFI_RADIO_CFG"); s != "" {
-		return s
-	}
-
-	configDirPath := os.Getenv("XDG_CONFIG_HOME")
-	if configDirPath == "" {
-		configDirPath = fmt.Sprintf("%s/.config", os.Getenv("$HOME"))
-	}
-
-	return filepath.Join(configDirPath, "sources.json")
 }
 
 func getBeatNames(sources []BeatSource) []string {
