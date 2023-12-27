@@ -28,11 +28,12 @@
           cliphist-rofi = ./cliphist-rofi;
           swww-switcher = ./swww-switcher;
           spotify-dbus = ./spotify-dbus;
+          rofi-radio = ./rofi-radio;
           mullx = ./mullx;
         };
       in
         {
-          default = self.packages.${system}.playerctl-waybar;
+          default = self.packages.${system}.rofi-radio;
         }
         // lib.attrsets.mapAttrs (_n: p:
           pkgs.callPackage p {
