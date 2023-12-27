@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	errRofiStopped       = errors.New("child rofi process was killed so there's nothing else to do")
+	errRofiStopped       = errors.New("child rofi process was stopped so there's nothing else to do")
 	errRofiUnknownOutput = errors.New("child rofi process returned an unexpected output")
 )
 
@@ -47,6 +47,8 @@ func showMenu(ctx context.Context, config Config) (BeatSource, error) {
 	if err := rofi.Wait(); err != nil {
 		if strings.Contains(err.Error(), "signal:") {
 			return BeatSource{}, errRofiStopped
+		} else if strings.Contains(err.Error(), "exit status") {
+			return BeatSource{}, errRofiStopped
 		}
 
 		return BeatSource{}, err
@@ -70,8 +72,7 @@ func showMenu(ctx context.Context, config Config) (BeatSource, error) {
 func getRofiCmdArgs(config Config) []string {
 	args := []string{
 		"-dmenu",
-		// "--conf", configPath,
-		// "--style", stylePath,
+		"-config", os.Getenv("ROFI_RADIO_ROFI_CFG"),
 		// "--color", colorsPath,
 		"-cache-file", "/dev/null",
 		"-hide-scroll", "--no-actions",
