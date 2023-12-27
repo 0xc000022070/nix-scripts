@@ -16,8 +16,6 @@ type Config struct {
 		Location *int `yaml:"location"`
 		YOffset  *int `yaml:"yoffset"`
 		XOffset  *int `yaml:"xoffset"`
-		Width    *int `yaml:"width"`
-		Height   *int `yaml:"height"`
 	}
 }
 

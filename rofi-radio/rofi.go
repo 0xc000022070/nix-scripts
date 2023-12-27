@@ -79,18 +79,6 @@ func getRofiCmdArgs(config Config) []string {
 		// "--define=matching=fuzzy",
 	}
 
-	if config.Window.Height != nil {
-		args = append(args, "-height", strconv.Itoa(*config.Window.Height))
-	} else {
-		args = append(args, "-height", "350")
-	}
-
-	if config.Window.Width != nil {
-		args = append(args, "-width", strconv.Itoa(*config.Window.Width))
-	} else {
-		args = append(args, "-width", "380")
-	}
-
 	if config.Window.XOffset != nil {
 		args = append(args, "-xoffset", strconv.Itoa(*config.Window.XOffset))
 	}
