@@ -16,10 +16,10 @@ var (
 	errRofiUnknownOutput = errors.New("child rofi process returned an unexpected output")
 )
 
-func showMenu(ctx context.Context, config Config) (BeatSource, error) {
-	beats := getBeatNames(config.Beats)
+func showMenu(ctx context.Context, config Config) (Broadcaster, error) {
+	broadcasters := getBroadcasterNames(config.Broadcasters)
 
-	echo := exec.CommandContext(ctx, "echo", strings.Join(beats, "\n"))
+	echo := exec.CommandContext(ctx, "echo", strings.Join(broadcasters, "\n"))
 	rofi := exec.CommandContext(ctx, "rofi", getRofiCmdArgs(config)...)
 
 	var b bytes.Buffer
@@ -31,11 +31,11 @@ func showMenu(ctx context.Context, config Config) (BeatSource, error) {
 	rofi.Stderr = os.Stderr
 
 	if err := echo.Start(); err != nil {
-		return BeatSource{}, err
+		return Broadcaster{}, err
 	}
 
 	if err := rofi.Start(); err != nil {
-		return BeatSource{}, err
+		return Broadcaster{}, err
 	}
 
 	go func() {
@@ -46,12 +46,12 @@ func showMenu(ctx context.Context, config Config) (BeatSource, error) {
 
 	if err := rofi.Wait(); err != nil {
 		if strings.Contains(err.Error(), "signal:") {
-			return BeatSource{}, errRofiStopped
+			return Broadcaster{}, errRofiStopped
 		} else if strings.Contains(err.Error(), "exit status") {
-			return BeatSource{}, errRofiStopped
+			return Broadcaster{}, errRofiStopped
 		}
 
-		return BeatSource{}, err
+		return Broadcaster{}, err
 	}
 
 	selectionOption := ""
@@ -60,32 +60,22 @@ func showMenu(ctx context.Context, config Config) (BeatSource, error) {
 		selectionOption = strings.TrimSuffix(string(data), "\n")
 	}
 
-	for i, beat := range beats {
+	for i, beat := range broadcasters {
 		if beat == selectionOption {
-			return config.Beats[i], nil
+			return config.Broadcasters[i], nil
 		}
 	}
 
-	return BeatSource{}, errRofiUnknownOutput
+	return Broadcaster{}, errRofiUnknownOutput
 }
 
 func getRofiCmdArgs(config Config) []string {
 	args := []string{
 		"-dmenu",
 		"-config", os.Getenv("ROFI_RADIO_ROFI_CFG"),
-		// "--color", colorsPath,
 		"-cache-file", "/dev/null",
 		"-hide-scroll", "--no-actions",
 		"-modi", PROGRAM_NAME,
-		// "--define=matching=fuzzy",
-	}
-
-	if config.Window.XOffset != nil {
-		args = append(args, "-xoffset", strconv.Itoa(*config.Window.XOffset))
-	}
-
-	if config.Window.YOffset != nil {
-		args = append(args, "-yoffset", strconv.Itoa(*config.Window.YOffset))
 	}
 
 	if config.Window.Location != nil {

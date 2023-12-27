@@ -9,13 +9,13 @@ import (
 	"github.com/samber/lo"
 )
 
-type BeatSource struct {
+type Broadcaster struct {
 	Name    string `yaml:"name"`
 	URL     string `yaml:"url"`
 	Shuffle bool   `yaml:"shuffle"`
 }
 
-func (bs BeatSource) CmdArgs() []string {
+func (bs Broadcaster) CmdArgs() []string {
 	args := make([]string, 0, 3)
 
 	if bs.Shuffle {
@@ -27,7 +27,7 @@ func (bs BeatSource) CmdArgs() []string {
 	return args
 }
 
-func LoadSources(sourcesFilePath string) ([]BeatSource, error) {
+func LoadSources(sourcesFilePath string) ([]Broadcaster, error) {
 	fp := sourcesFilePath
 
 	info, err := os.Stat(fp)
@@ -46,7 +46,7 @@ func LoadSources(sourcesFilePath string) ([]BeatSource, error) {
 		return nil, fmt.Errorf("unable to read file '%s': %w", fp, err)
 	}
 
-	var sources []BeatSource
+	var sources []Broadcaster
 
 	if err := json.Unmarshal(content, &sources); err != nil {
 		return nil, fmt.Errorf("unable to deserialize '%s' as JSON file: %w", fp, err)
@@ -60,8 +60,8 @@ func LoadSources(sourcesFilePath string) ([]BeatSource, error) {
 	return sources, nil
 }
 
-func getBeatNames(sources []BeatSource) []string {
-	return lo.Map(sources, func(source BeatSource, i int) string {
+func getBroadcasterNames(sources []Broadcaster) []string {
+	return lo.Map(sources, func(source Broadcaster, i int) string {
 		if source.Name != "" {
 			return source.Name
 		}

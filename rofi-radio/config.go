@@ -10,12 +10,10 @@ import (
 )
 
 type Config struct {
-	StopBeforeSelection bool         `yaml:"stop-before-selection"`
-	Beats               []BeatSource `yaml:"beats"`
+	StopBeforeSelection bool          `yaml:"stop-before-selection"`
+	Broadcasters        []Broadcaster `yaml:"broadcasters"`
 	Window              struct {
 		Location *int `yaml:"location"`
-		YOffset  *int `yaml:"yoffset"`
-		XOffset  *int `yaml:"xoffset"`
 	}
 }
 

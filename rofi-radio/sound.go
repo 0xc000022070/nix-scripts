@@ -12,7 +12,7 @@ import (
 	"github.com/shirou/gopsutil/v3/process"
 )
 
-func playBeat(ctx context.Context, source BeatSource) error {
+func playBeat(ctx context.Context, source Broadcaster) error {
 	p, err := exec.LookPath("mpv")
 	if err != nil {
 		return errors.New("could not find mpv executable")

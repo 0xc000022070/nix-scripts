@@ -1,7 +1,8 @@
 stop-before-selection: false
 window:
-  location: 1
-beats:
+  location: 2
+  xoffset: 50
+broadcasters:
   - name: Lofi Girl
     url: https://play.streamafrica.net/lofiradio
   - name: Shannonside FM
