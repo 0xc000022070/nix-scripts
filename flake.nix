@@ -33,6 +33,7 @@
         swww-switcher = ./swww-switcher;
         spotify-dbus = ./spotify-dbus;
         rofi-radio = ./rofi-radio;
+        pstore = ./pstore;
         mullx = ./mullx;
       };
     in
