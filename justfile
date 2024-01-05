@@ -1,5 +1,9 @@
 
+search_and_destroy target:
+    find . -type d -name '{{target}}' -exec rm -rf {} \; 2>/dev/null
+
 clean:
     set +e
-    rm -rf result _build
-    find . -type d -name 'target' -exec rm -rf {} \; 2>/dev/null
+    just search_and_destroy target
+    just search_and_destroy _build
+    just search_and_destroy result
