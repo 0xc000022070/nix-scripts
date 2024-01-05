@@ -47,6 +47,6 @@
         })
       entries);
 
-    homeManagerModules.default = import ./nix/hm-module.nix self;
+    homeManagerModules.default = import ./nix/hm-module.nix {inherit packages;} // self;
   };
 }
