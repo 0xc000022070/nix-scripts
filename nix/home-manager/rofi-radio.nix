@@ -1,4 +1,5 @@
-self: {
+{
+  packages,
   config,
   pkgs,
   lib,
@@ -6,8 +7,6 @@ self: {
 }:
 with lib; let
   inherit (pkgs.stdenv.hostPlatform) system;
-
-  packages = self.packages.${system};
   cfg = config.programs.rofi-radio;
 in {
   options.programs.rofi-radio = let
@@ -40,7 +39,7 @@ in {
 
   config = mkIf cfg.enable {
     home.packages = [
-      packages.rofi-radio
+      packages.${system}.rofi-radio
     ];
 
     xdg.configFile."rofi-radio/config.yaml".source = (pkgs.formats.yaml {}).generate "rofi-radio-config" {

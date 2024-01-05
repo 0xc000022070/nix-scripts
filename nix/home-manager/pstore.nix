@@ -1,4 +1,5 @@
-self: {
+{
+  packages,
   config,
   pkgs,
   lib,
@@ -6,8 +7,6 @@ self: {
 }:
 with lib; let
   inherit (pkgs.stdenv.hostPlatform) system;
-
-  packages = self.packages.${system};
   cfg = config.programs.pstore;
 in {
   options = {
@@ -18,7 +17,7 @@ in {
 
   config = mkIf cfg.enable {
     home.packages = [
-      packages.pstore
+      packages.${system}.pstore
     ];
   };
 }
