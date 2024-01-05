@@ -24,17 +24,17 @@
       pkgs = pkgsFor.${system};
 
       entries = {
-        dunstify-brightness = ./dunstify-brightness;
-        battery-notifier = ./battery-notifier;
-        playerctl-waybar = ./playerctl-waybar;
-        dunstify-sound = ./dunstify-sound;
-        screen-capture = ./screen-capture;
-        cliphist-rofi = ./cliphist-rofi;
-        swww-switcher = ./swww-switcher;
-        spotify-dbus = ./spotify-dbus;
-        rofi-radio = ./rofi-radio;
-        pstore = ./pstore;
-        mullx = ./mullx;
+        dunstify-brightness = ./apps/dunstify-brightness;
+        battery-notifier = ./apps/battery-notifier;
+        playerctl-waybar = ./apps/playerctl-waybar;
+        dunstify-sound = ./apps/dunstify-sound;
+        screen-capture = ./apps/screen-capture;
+        cliphist-rofi = ./apps/cliphist-rofi;
+        swww-switcher = ./apps/swww-switcher;
+        spotify-dbus = ./apps/spotify-dbus;
+        rofi-radio = ./apps/rofi-radio;
+        pstore = ./apps/pstore;
+        mullx = ./apps/mullx;
       };
     in
       {
