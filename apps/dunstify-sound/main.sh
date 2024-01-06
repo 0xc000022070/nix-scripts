@@ -10,10 +10,30 @@ SINK_TAG="string:x-dunst-stack-tag:sink"
 
 BAR_COLOR="bar-color-placeholder"
 
+print_usage_and_exit() {
+    echo "Usage:"
+    echo "$PROGRAM_NAME [flags]"
+    echo
+    echo "Required flags:"
+    echo "  --inc		Increase speaker's volume."
+    echo "  --dec		Decrease speaker's volume."
+    echo "  --toggle-mic	Turn on/off speaker."
+    echo "  --toggle-vol	Turn on/off microphone."
+    echo
+    echo "Optional flags:"
+    echo "  --unleashed	Exceed to maximum value(if possible)"
+    exit 1
+}
+
 main() {
     case "$1" in
     --inc)
-        amixer set Master $LEVEL_OFFSET%+
+        if [ "$2" = "--unleashed" ]; then
+            pactl -- set-sink-volume 0 +$LEVEL_OFFSET%
+        else
+            amixer set Master $LEVEL_OFFSET%+
+        fi
+
         notify_audio_update
         ;;
     --dec)
@@ -28,15 +48,15 @@ main() {
         pactl set-source-mute @DEFAULT_SOURCE@ toggle
         notify_microphone_update
         ;;
+    --unleashed)
+        if [ "$2" = "" ] || [ "$2" = "--unleashed" ]; then
+            print_usage_and_exit
+        fi
+
+        main "$2" "$1"
+        ;;
     *)
-        echo "Usage:"
-        echo "$PROGRAM_NAME [flag]"
-        echo "Flags:"
-        echo "  --inc			Increase speaker's volume."
-        echo "  --dec			Decrease speaker's volume."
-        echo "  --toggle-mic	Mute/unmute speaker."
-        echo "  --toggle-vol:	Mute/unmute microphone."
-        exit 1
+        print_usage_and_exit
         ;;
     esac
 }
