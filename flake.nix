@@ -19,7 +19,7 @@
       });
 
     eachSystem = lib.genAttrs (import systems);
-  in {
+  in rec {
     packages = eachSystem (system: let
       pkgs = pkgsFor.${system};
 
@@ -47,6 +47,6 @@
         })
       entries);
 
-    homeManagerModules.default = import ./nix/hm-module.nix {inherit packages;} // self;
+    homeManagerModules.default = import ./nix/hm-module.nix self;
   };
 }
