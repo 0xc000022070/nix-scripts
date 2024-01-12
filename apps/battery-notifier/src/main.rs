@@ -1,10 +1,12 @@
+use chrono::Utc;
 use core::fmt;
 use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{
     env, fs,
     io::{self, Error},
     process::{Command, Output},
-    thread, time,
+    thread,
+    time::{self, Duration},
 };
 
 const BATTERY_CAPACITY_PATH: &str = "/sys/class/power_supply/BAT1/capacity";
@@ -71,8 +73,12 @@ impl fmt::Display for BatteryNotificationLevel {
 }
 
 fn main() {
+    let start_time = Utc::now().time();
+
     let sleep_time = time::Duration::from_millis(700); // 0.7s
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
+
+    thread::sleep(Duration::from_secs(3));
 
     loop {
         let raw_capacity: String = fs::read_to_string(BATTERY_CAPACITY_PATH)
@@ -96,8 +102,13 @@ fn main() {
                 last_notification_level
             );
 
-            // remove_desktop_notification();
-            send_sound_notification(CHARGING_BATTERY_SOUND);
+            let current_time = Utc::now().time();
+
+            if (current_time - start_time).num_seconds() > 5 {
+                send_sound_notification(CHARGING_BATTERY_SOUND);
+            } else {
+                println!("[WARNING] the app started with the computer plugged in, nothing to do");
+            }
 
             last_notification_level = BatteryNotificationLevel::Charging
         } else if status == "Discharging" || status == "Not charging" {
