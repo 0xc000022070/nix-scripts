@@ -78,8 +78,6 @@ fn main() {
     let sleep_time = time::Duration::from_millis(700); // 0.7s
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
 
-    thread::sleep(Duration::from_secs(3));
-
     loop {
         let raw_capacity: String = fs::read_to_string(BATTERY_CAPACITY_PATH)
             .expect("Read battery capacity file")
