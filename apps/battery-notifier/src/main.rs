@@ -14,8 +14,6 @@ mod helpers;
 use helpers::is_program_in_path;
 
 const APP_NOTIFICATION_ID: &str = "string:x-dunst-stack-tag:battery";
-const NOTIFY_SEND: &str = "notify-send";
-const DUNSTIFY: &str = "dunstify";
 
 fn main() {
     let start_time = Utc::now().time();
@@ -98,19 +96,8 @@ fn main() {
 }
 
 fn send_desktop_notification(urgency: Urgency, title: &str, content: &str) -> io::Result<Output> {
-    let result: io::Result<Output>;
-
-    if is_program_in_path(DUNSTIFY) {
-        result = Command::new(DUNSTIFY)
-            .arg("--appname=battery-notifier")
-            .arg(format!("--urgency={}", urgency.to_string()))
-            .arg(format!("--hints={}", APP_NOTIFICATION_ID))
-            .arg(format!("--icon={}", BATTERY_DANGER_PATH))
-            .arg(title)
-            .arg(content)
-            .output();
-    } else if is_program_in_path(NOTIFY_SEND) {
-        result = Command::new(NOTIFY_SEND)
+    if is_program_in_path("notify-send") {
+        return Command::new("notify-send")
             .arg(format!("--urgency={}", urgency.to_string()))
             .arg(format!("--hint={}", APP_NOTIFICATION_ID))
             .arg(format!("--icon={}", BATTERY_DANGER_PATH))
@@ -118,14 +105,9 @@ fn send_desktop_notification(urgency: Urgency, title: &str, content: &str) -> io
             .arg(content)
             .output();
     } else {
-        let err = Error::new(
-            io::ErrorKind::NotFound,
-            "neither notify-send or dunstify were found in $PATH",
-        );
+        let err = Error::new(io::ErrorKind::NotFound, "notify-send were found in $PATH");
         return Result::Err(err);
     }
-
-    result
 }
 
 fn send_sound_notification(sound: &[u8]) {
