@@ -1,7 +1,6 @@
 use chrono::Utc;
 use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{
-    fs,
     io::{self, Error},
     process::{Command, Output},
     thread,
@@ -25,17 +24,9 @@ fn main() {
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
 
     loop {
-        let raw_capacity: String = fs::read_to_string(BATTERY_CAPACITY_PATH)
-            .expect("Read battery capacity file")
-            .replace("\n", "");
-
-        let capacity: u8 = raw_capacity
-            .parse::<u8>()
-            .expect("BAT1 capacity file doesn't contains a number");
-
-        let status: String = fs::read_to_string(BATTERY_STATUS_PATH)
-            .expect("Read battery status file")
-            .replace("\n", "");
+        let psc = PowerSupplyClass::new();
+        let capacity = psc.get_capacity();
+        let status = psc.get_status();
 
         println!("[DEBUG] Current capacity: {} Status: {}", capacity, status);
 

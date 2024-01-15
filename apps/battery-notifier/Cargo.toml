@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.31"
+linuxver = "0.1.0"
+os_info = { version = "3.7.0", default-features = false }
 soloud = { git = "https://github.com/MoAlyousef/soloud-rs" }
 
 
