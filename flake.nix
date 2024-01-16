@@ -33,7 +33,7 @@
         swww-switcher = ./apps/swww-switcher;
         spotify-dbus = ./apps/spotify-dbus;
         rofi-radio = ./apps/rofi-radio;
-        pstore = ./apps/pstore;
+        nixgrep = ./apps/nixgrep;
         mullx = ./apps/mullx;
       };
     in

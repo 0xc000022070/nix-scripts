@@ -1,4 +1,0 @@
-(executable
- (public_name pstore)
- (name main)
- (libraries pstore str))

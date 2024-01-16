@@ -1,0 +1,4 @@
+(executable
+ (public_name nixgrep)
+ (name main)
+ (libraries nixgrep str))

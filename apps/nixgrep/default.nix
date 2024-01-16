@@ -1,11 +1,11 @@
 {pkgs ? import <nixpkgs> {}, ...}:
 with pkgs;
   ocamlPackages.buildDunePackage rec {
-    pname = "pstore";
+    pname = "nixgrep";
     version = "unstable";
 
     src = builtins.path {
-      name = pname;
+      name = "${pname}-source";
       path = ./.;
     };
 

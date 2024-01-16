@@ -17,7 +17,7 @@ let print_usage exit_code =
   Printf.printf
     "Get /nix/store paths that match the given argument.\n\n\
      Usage:\n\
-    \ pstore <search-term>\n\n\
+    \ nixgrep <search-term>\n\n\
      Flags:\n\
     \  -h, --help\tHelp for this program\n";
   exit exit_code
