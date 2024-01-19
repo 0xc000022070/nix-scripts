@@ -5,7 +5,7 @@ with pkgs;
     version = "unstable";
 
     src = builtins.path {
-      name = pname;
+      name = "${pname}-source";
       path = ./.;
     };
 

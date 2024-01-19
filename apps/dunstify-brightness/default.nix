@@ -8,7 +8,7 @@ in
     name = "dunstify-brightness";
 
     src = builtins.path {
-      inherit name;
+      name = "${name}-source";
       path = ./.;
     };
 

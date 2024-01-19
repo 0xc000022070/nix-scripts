@@ -7,7 +7,7 @@ in
     name = "spotify-dbus";
 
     src = builtins.path {
-      inherit name;
+      name = "${name}-source";
       path = ./.;
     };
 

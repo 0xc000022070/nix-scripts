@@ -2,11 +2,22 @@
   mkPoetryApplication,
   pkgs,
   ...
-}:
-mkPoetryApplication {
-  python = pkgs.python311;
+}: let
+  pname = "swww-switcher";
+in
+  mkPoetryApplication {
+    python = pkgs.python311;
 
-  projectDir = ./.;
-  pyproject = ./pyproject.toml;
-  poetrylock = ./poetry.lock;
-}
+    projectDir = builtins.path {
+      name = "${pname}-source";
+      path = ./.;
+    };
+    pyproject = builtins.path {
+      name = "${pname}-pyproject.toml";
+      path = ./pyproject.toml;
+    };
+    poetrylock = builtins.path {
+      name = "${pname}-poetry.lock";
+      path = ./poetry.lock;
+    };
+  }

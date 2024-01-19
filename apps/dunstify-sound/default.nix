@@ -16,7 +16,7 @@ in
       name = "dunstify-sound";
 
       src = builtins.path {
-        inherit name;
+        name = "${name}-source";
         path = ./.;
       };
 
