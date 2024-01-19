@@ -25,10 +25,10 @@
 
       entries = {
         dunstify-brightness = ./apps/dunstify-brightness;
+        screen-capture-x11 = ./apps/screen-capture-x11;
         battery-notifier = ./apps/battery-notifier;
         playerctl-waybar = ./apps/playerctl-waybar;
         dunstify-sound = ./apps/dunstify-sound;
-        screen-capture = ./apps/screen-capture;
         cliphist-rofi = ./apps/cliphist-rofi;
         swww-switcher = ./apps/swww-switcher;
         spotify-dbus = ./apps/spotify-dbus;

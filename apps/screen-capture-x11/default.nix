@@ -7,10 +7,10 @@
   ];
 in
   pkgs.stdenv.mkDerivation rec {
-    name = "screen-capture";
+    name = "screen-capture-x11";
 
     src = builtins.path {
-      inherit name;
+      name = "${name}-source";
       path = ./.;
     };
 
