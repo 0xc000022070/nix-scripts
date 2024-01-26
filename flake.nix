@@ -26,7 +26,6 @@
       entries = {
         dunstify-brightness = ./apps/dunstify-brightness;
         screen-capture-x11 = ./apps/screen-capture-x11;
-        battery-notifier = ./apps/battery-notifier;
         playerctl-waybar = ./apps/playerctl-waybar;
         dunstify-sound = ./apps/dunstify-sound;
         cliphist-rofi = ./apps/cliphist-rofi;
