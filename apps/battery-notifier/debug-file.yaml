@@ -13,4 +13,4 @@ states:
     capacity: 100
 
 # Expressed in seconds, this is the gap between both battery states.
-seconds_between: 3
+seconds_between: 1

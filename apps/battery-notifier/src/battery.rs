@@ -3,13 +3,6 @@ use linuxver::version as get_linux_version;
 use serde::Deserialize;
 use std::{fmt, fs, ops::Index};
 
-pub const BATTERY_DANGER_PATH: &str = "./assets/battery-danger.png";
-
-pub const CHARGING_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/charging.mp3");
-pub const REMINDER_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/30.mp3");
-pub const THREAT_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/5.mp3");
-pub const WARN_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/15.mp3");
-
 pub struct PowerSupplyClass {
     path: String,
     debug: Option<Debug>,
@@ -90,33 +83,6 @@ impl PowerSupplyClass {
 
     fn get_status_path(&self) -> String {
         format!("{}/status", self.path)
-    }
-}
-
-#[derive(Clone, Copy)]
-pub enum Urgency {
-    CRITICAL,
-    NORMAL,
-    LOW,
-}
-
-impl Urgency {
-    pub fn get_sound(&self) -> &[u8] {
-        match self {
-            Urgency::CRITICAL => THREAT_BATTERY_SOUND,
-            Urgency::NORMAL => WARN_BATTERY_SOUND,
-            Urgency::LOW => REMINDER_BATTERY_SOUND,
-        }
-    }
-}
-
-impl fmt::Display for Urgency {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Urgency::CRITICAL => write!(f, "critical"),
-            Urgency::NORMAL => write!(f, "normal"),
-            Urgency::LOW => write!(f, "low"),
-        }
     }
 }
 

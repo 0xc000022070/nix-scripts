@@ -1,9 +1,6 @@
 use chrono::Utc;
 use clap::Parser;
-use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{
-    io::{self, Error, ErrorKind},
-    process::{Command, Output},
     thread,
     time::{self},
 };
@@ -11,11 +8,11 @@ use std::{
 mod config;
 use config::*;
 
+mod notify;
+use notify::*;
+
 mod battery;
 use battery::*;
-
-mod helpers;
-use helpers::is_program_in_path;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -118,46 +115,5 @@ fn main() {
         }
 
         thread::sleep(sleep_time);
-    }
-}
-
-fn send_desktop_notification(urgency: Urgency, title: &str, content: &str) -> io::Result<Output> {
-    if is_program_in_path("notify-send") {
-        return Command::new("notify-send")
-            .arg(format!("--urgency={}", urgency.to_string()))
-            .arg(format!("--hint={}", "string:x-dunst-stack-tag:battery"))
-            .arg(format!("--icon={}", BATTERY_DANGER_PATH))
-            .arg(title)
-            .arg(content)
-            .output();
-    } else {
-        let err = Error::new(ErrorKind::NotFound, "notify-send were not found in $PATH");
-        return Result::Err(err);
-    }
-}
-
-fn send_sound_notification(sound: &[u8]) {
-    let rsl = Soloud::default();
-
-    match rsl {
-        Ok(sl) => {
-            let mut wav = Wav::default();
-
-            match wav.load_mem(sound) {
-                Ok(r) => println!("[DEBUG] Sound file has been loaded: {:#?}", r),
-                Err(error) => {
-                    println!("[WARN] Couldn't load sound file: {}", error.to_string())
-                }
-            };
-
-            sl.play(&wav);
-            while sl.voice_count() > 0 {
-                thread::sleep(time::Duration::from_millis(500));
-            }
-        }
-        Err(error) => println!(
-            "[ERROR] soloud instance couldn't be correctly initialized: {}",
-            error.to_string()
-        ),
     }
 }
