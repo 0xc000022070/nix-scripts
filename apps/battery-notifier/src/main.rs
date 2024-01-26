@@ -2,7 +2,7 @@ use chrono::Utc;
 use clap::Parser;
 use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{
-    io::{self, Error},
+    io::{self, Error, ErrorKind},
     process::{Command, Output},
     thread,
     time::{self},
@@ -115,7 +115,7 @@ fn send_desktop_notification(urgency: Urgency, title: &str, content: &str) -> io
             .arg(content)
             .output();
     } else {
-        let err = Error::new(io::ErrorKind::NotFound, "notify-send were found in $PATH");
+        let err = Error::new(ErrorKind::NotFound, "notify-send were not found in $PATH");
         return Result::Err(err);
     }
 }
