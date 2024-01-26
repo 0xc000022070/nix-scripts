@@ -1,4 +1,5 @@
 use chrono::Utc;
+use clap::Parser;
 use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{
     io::{self, Error},
@@ -13,14 +14,23 @@ use battery::*;
 mod helpers;
 use helpers::is_program_in_path;
 
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(short, long)]
+    debug_file: Option<String>,
+}
+
 const APP_NOTIFICATION_ID: &str = "string:x-dunst-stack-tag:battery";
 
 fn main() {
+    let args = Args::parse();
+
     let start_time = Utc::now().time();
 
     let sleep_time = time::Duration::from_millis(700); // 0.7s
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
-    let psc = PowerSupplyClass::new();
+    let mut psc = PowerSupplyClass::new(args.debug_file);
 
     loop {
         let capacity = psc.get_capacity();
