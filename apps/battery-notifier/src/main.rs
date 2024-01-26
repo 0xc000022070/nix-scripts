@@ -18,7 +18,9 @@ use battery::*;
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[arg(short, long)]
+    /// To simulate battery states (yaml).
     debug_file: Option<String>,
+    /// The config file path (toml).
     #[arg(short, long)]
     config_file: Option<String>,
 }
