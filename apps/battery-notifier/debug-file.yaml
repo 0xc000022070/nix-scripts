@@ -1,11 +1,14 @@
 # Enum for STATUS (case-sensitive): Charging | Full | Discharging
 # Enum for CAPACITY: integers from 0 to 100.
-from:
-  status: Charging
-  capacity: 75
-to:
-  status: Discharging
-  capacity: 10
+states:
+  - status: Discharging
+    capacity: 75
+  - status: Discharging
+    capacity: 10
+  - status: Charging
+    capacity: 85
+  - status: Full
+    capacity: 100
 
 # Expressed in seconds, this is the gap between both battery states.
 seconds_between: 3

@@ -1,7 +1,7 @@
 use chrono::Utc;
 use linuxver::version as get_linux_version;
 use serde::Deserialize;
-use std::{fmt, fs};
+use std::{fmt, fs, ops::Index};
 
 pub const BATTERY_DANGER_PATH: &str = "./assets/battery-danger.png";
 
@@ -9,31 +9,6 @@ pub const CHARGING_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/cha
 pub const REMINDER_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/30.mp3");
 pub const THREAT_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/5.mp3");
 pub const WARN_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/15.mp3");
-
-struct Debug {
-    options: DebugOptions,
-    use_first: bool,
-    last_update_at: chrono::NaiveTime,
-}
-
-impl Debug {
-    fn get_state(&self) -> DebugState {
-        if self.use_first {
-            self.options.from.clone()
-        } else {
-            self.options.to.clone()
-        }
-    }
-
-    fn should_toggle_state(&self, now: chrono::NaiveTime) -> bool {
-        let diff = now - self.last_update_at;
-        diff.num_seconds() >= self.options.seconds_between
-    }
-
-    fn toggle_state(&mut self) {
-        self.use_first = !self.use_first
-    }
-}
 
 pub struct PowerSupplyClass {
     path: String,
@@ -60,14 +35,11 @@ impl PowerSupplyClass {
             }
         };
 
-        let now = Utc::now().time();
-
         PowerSupplyClass {
             path: format!("/sys/class/power_supply/{}", class),
-            debug: debug_file_path.map(|file_path| Debug {
-                options: DebugOptions::parse(file_path),
-                last_update_at: now,
-                use_first: true,
+            debug: debug_file_path.map(|p| {
+                let settings = DebugSettings::parse(p);
+                Debug::new(settings)
             }),
         }
     }
@@ -77,9 +49,9 @@ impl PowerSupplyClass {
             let debug = self.debug.as_mut().unwrap();
             let now = Utc::now().time();
 
-            if debug.should_toggle_state(now) {
+            if debug.should_move_to_next_state(now) {
                 debug.last_update_at = now;
-                debug.toggle_state();
+                debug.next_state();
             };
 
             return debug.get_state().capacity;
@@ -99,9 +71,9 @@ impl PowerSupplyClass {
             let debug = self.debug.as_mut().unwrap();
             let now = Utc::now().time();
 
-            if debug.should_toggle_state(now) {
+            if debug.should_move_to_next_state(now) {
                 debug.last_update_at = now;
-                debug.toggle_state();
+                debug.next_state();
             };
 
             return debug.get_state().status;
@@ -176,17 +148,51 @@ struct DebugState {
 }
 
 #[derive(Clone, Deserialize)]
-pub struct DebugOptions {
-    from: DebugState,
-    to: DebugState,
+pub struct DebugSettings {
+    states: Vec<DebugState>,
     seconds_between: i64,
 }
 
-impl DebugOptions {
+impl DebugSettings {
     pub fn parse(debug_file_path: String) -> Self {
         let content = fs::read_to_string(debug_file_path).expect("read file path");
-        let options: DebugOptions = serde_yaml::from_str(&content).expect("parse debug file");
+        let options: DebugSettings = serde_yaml::from_str(&content).expect("parse debug file");
 
         options
+    }
+}
+
+struct Debug {
+    settings: DebugSettings,
+    current_state: usize,
+    last_update_at: chrono::NaiveTime,
+}
+
+impl Debug {
+    fn new(settings: DebugSettings) -> Self {
+        Self {
+            settings,
+            current_state: 0,
+            last_update_at: Utc::now().time(),
+        }
+    }
+
+    fn get_state(&self) -> DebugState {
+        self.settings.states.index(self.current_state).clone()
+    }
+
+    fn should_move_to_next_state(&self, now: chrono::NaiveTime) -> bool {
+        let diff = now - self.last_update_at;
+        diff.num_seconds() >= self.settings.seconds_between
+    }
+
+    fn next_state(&mut self) {
+        let mut next_state = self.current_state + 1;
+
+        if next_state >= self.settings.states.len() {
+            next_state = 0
+        }
+
+        self.current_state = next_state
     }
 }
