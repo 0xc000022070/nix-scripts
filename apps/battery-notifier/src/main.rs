@@ -30,7 +30,7 @@ fn main() {
 
     let sleep_time = time::Duration::from_millis(700); // 0.7s
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
-    let psc = PowerSupplyClass::new(args.debug_file);
+    let mut psc = PowerSupplyClass::new(args.debug_file);
 
     loop {
         let capacity = psc.get_capacity();

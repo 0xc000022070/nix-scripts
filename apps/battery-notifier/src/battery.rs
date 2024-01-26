@@ -1,3 +1,4 @@
+use chrono::Utc;
 use linuxver::version as get_linux_version;
 use serde::Deserialize;
 use std::{fmt, fs};
@@ -9,9 +10,34 @@ pub const REMINDER_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/30.
 pub const THREAT_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/5.mp3");
 pub const WARN_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/15.mp3");
 
+struct Debug {
+    options: DebugOptions,
+    use_first: bool,
+    last_update_at: chrono::NaiveTime,
+}
+
+impl Debug {
+    fn get_state(&self) -> DebugState {
+        if self.use_first {
+            self.options.from.clone()
+        } else {
+            self.options.to.clone()
+        }
+    }
+
+    fn should_toggle_state(&self, now: chrono::NaiveTime) -> bool {
+        let diff = now - self.last_update_at;
+        diff.num_seconds() >= self.options.seconds_between
+    }
+
+    fn toggle_state(&mut self) {
+        self.use_first = !self.use_first
+    }
+}
+
 pub struct PowerSupplyClass {
     path: String,
-    debug: Option<DebugOptions>,
+    debug: Option<Debug>,
 }
 
 impl PowerSupplyClass {
@@ -34,15 +60,29 @@ impl PowerSupplyClass {
             }
         };
 
+        let now = Utc::now().time();
+
         PowerSupplyClass {
             path: format!("/sys/class/power_supply/{}", class),
-            debug: debug_file_path.map(DebugOptions::parse),
+            debug: debug_file_path.map(|file_path| Debug {
+                options: DebugOptions::parse(file_path),
+                last_update_at: now,
+                use_first: true,
+            }),
         }
     }
 
-    pub fn get_capacity(&self) -> u8 {
+    pub fn get_capacity(&mut self) -> u8 {
         if self.debug.is_some() {
-            return self.debug.as_ref().unwrap().from.capacity;
+            let debug = self.debug.as_mut().unwrap();
+            let now = Utc::now().time();
+
+            if debug.should_toggle_state(now) {
+                debug.last_update_at = now;
+                debug.toggle_state();
+            };
+
+            return debug.get_state().capacity;
         }
 
         let raw_capacity: String = fs::read_to_string(self.get_capacity_path())
@@ -54,9 +94,17 @@ impl PowerSupplyClass {
             .expect("BAT1 capacity file doesn't contains a number")
     }
 
-    pub fn get_status(&self) -> String {
+    pub fn get_status(&mut self) -> String {
         if self.debug.is_some() {
-            return self.debug.as_ref().unwrap().from.status.to_owned();
+            let debug = self.debug.as_mut().unwrap();
+            let now = Utc::now().time();
+
+            if debug.should_toggle_state(now) {
+                debug.last_update_at = now;
+                debug.toggle_state();
+            };
+
+            return debug.get_state().status;
         }
 
         fs::read_to_string(self.get_status_path())
@@ -121,17 +169,17 @@ impl fmt::Display for BatteryNotificationLevel {
     }
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 struct DebugState {
     status: String,
     capacity: u8,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct DebugOptions {
     from: DebugState,
     to: DebugState,
-    seconds_between: u32,
+    seconds_between: i64,
 }
 
 impl DebugOptions {
