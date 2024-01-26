@@ -7,5 +7,5 @@ to:
   status: charging
   capacity: 50
 
-# Expressed in milliseconds, this is the gap between both battery states.
-space-between: 3000
+# Expressed in seconds, this is the gap between both battery states.
+seconds_between: 3

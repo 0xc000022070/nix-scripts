@@ -131,7 +131,7 @@ struct DebugState {
 pub struct DebugOptions {
     from: DebugState,
     to: DebugState,
-    space_between: u32,
+    seconds_between: u32,
 }
 
 impl DebugOptions {
