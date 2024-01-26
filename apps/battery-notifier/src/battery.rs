@@ -79,6 +79,19 @@ impl Urgency {
     }
 }
 
+// impl str::FromStr for Urgency {
+//     type Err = ();
+
+//     fn from_str(input: &str) -> Result<Urgency, Self::Err> {
+//         match input {
+//             "CRITICAL" => Ok(Urgency::CRITICAL),
+//             "NORMAL" => Ok(Urgency::NORMAL),
+//             "LOW" => Ok(Urgency::LOW),
+//             _ => Err(()),
+//         }
+//     }
+// }
+
 impl fmt::Display for Urgency {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -109,3 +122,20 @@ impl fmt::Display for BatteryNotificationLevel {
         }
     }
 }
+
+struct DebugState {
+    status: String,
+    capacity: u8,
+}
+
+pub struct DebugOptions {
+    from: DebugState,
+    to: DebugState,
+    space_between: u32,
+}
+
+// impl DebugOptions {
+//     pub fn parse() -> Self {
+
+//     }
+// }
