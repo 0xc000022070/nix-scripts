@@ -13,3 +13,4 @@ linuxver = "0.1.0"
 os_info = { version = "3.7.0", default-features = false }
 serde_yaml = "0.9.30"
 soloud = { git = "https://github.com/MoAlyousef/soloud-rs" }
+toml = "0.8.8"
