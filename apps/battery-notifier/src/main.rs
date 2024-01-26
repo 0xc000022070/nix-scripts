@@ -2,11 +2,14 @@ use chrono::Utc;
 use clap::Parser;
 use soloud::{audio::Wav, AudioExt, LoadExt, Soloud};
 use std::{
-    io::{self, Error},
+    io::{self, Error, ErrorKind},
     process::{Command, Output},
     thread,
     time::{self},
 };
+
+mod config;
+use config::*;
 
 mod battery;
 use battery::*;
@@ -19,18 +22,31 @@ use helpers::is_program_in_path;
 struct Args {
     #[arg(short, long)]
     debug_file: Option<String>,
+    #[arg(short, long)]
+    config_file: Option<String>,
 }
-
-const APP_NOTIFICATION_ID: &str = "string:x-dunst-stack-tag:battery";
 
 fn main() {
     let args = Args::parse();
 
+    let cp = get_config_file(args.config_file);
+    let config = Config::parse_or_default(cp);
+
     let start_time = Utc::now().time();
 
-    let sleep_time = time::Duration::from_millis(700); // 0.7s
+    let sleep_time = time::Duration::from_millis(config.sleep_ms); // 0.7s
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
     let mut psc = PowerSupplyClass::new(args.debug_file);
+
+    // Calculates the notification level based on the provided battery capacity.
+    let get_notification_level = |capacity: u8| -> BatteryNotificationLevel {
+        match capacity {
+            c if c <= config.reminder_threshold => BatteryNotificationLevel::Reminder,
+            c if c <= config.warn_threshold => BatteryNotificationLevel::Warn,
+            c if c <= config.threat_threshold => BatteryNotificationLevel::Threat,
+            _ => BatteryNotificationLevel::NoConflict,
+        }
+    };
 
     loop {
         let capacity = psc.get_capacity();
@@ -109,13 +125,13 @@ fn send_desktop_notification(urgency: Urgency, title: &str, content: &str) -> io
     if is_program_in_path("notify-send") {
         return Command::new("notify-send")
             .arg(format!("--urgency={}", urgency.to_string()))
-            .arg(format!("--hint={}", APP_NOTIFICATION_ID))
+            .arg(format!("--hint={}", "string:x-dunst-stack-tag:battery"))
             .arg(format!("--icon={}", BATTERY_DANGER_PATH))
             .arg(title)
             .arg(content)
             .output();
     } else {
-        let err = Error::new(io::ErrorKind::NotFound, "notify-send were found in $PATH");
+        let err = Error::new(ErrorKind::NotFound, "notify-send were not found in $PATH");
         return Result::Err(err);
     }
 }
@@ -143,15 +159,5 @@ fn send_sound_notification(sound: &[u8]) {
             "[ERROR] soloud instance couldn't be correctly initialized: {}",
             error.to_string()
         ),
-    }
-}
-
-// Calculates the notification level based on the provided battery capacity.
-fn get_notification_level(capacity: u8) -> BatteryNotificationLevel {
-    match capacity {
-        16..=30 => BatteryNotificationLevel::Reminder,
-        6..=15 => BatteryNotificationLevel::Warn,
-        1..=5 => BatteryNotificationLevel::Threat,
-        _ => BatteryNotificationLevel::NoConflict,
     }
 }
