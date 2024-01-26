@@ -1,5 +1,7 @@
-# Enum for STATUS (case-sensitive): Charging | Full | Discharging
-# Enum for CAPACITY: integers from 0 to 100.
+# STATUS (case-sensitive): Charging | Full | Discharging
+# CAPACITY: integers from 0 to 100.
+#
+# See https://docs.kernel.org/power/power_supply_class.html for more.
 states:
   - status: Discharging
     capacity: 75
