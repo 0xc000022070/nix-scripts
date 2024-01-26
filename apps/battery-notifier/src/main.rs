@@ -18,7 +18,7 @@ use helpers::is_program_in_path;
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[arg(short, long)]
-    debug_file: String,
+    debug_file: Option<String>,
 }
 
 const APP_NOTIFICATION_ID: &str = "string:x-dunst-stack-tag:battery";
@@ -30,7 +30,7 @@ fn main() {
 
     let sleep_time = time::Duration::from_millis(700); // 0.7s
     let mut last_notification_level = BatteryNotificationLevel::NoConflict;
-    let psc = PowerSupplyClass::new();
+    let psc = PowerSupplyClass::new(args.debug_file);
 
     loop {
         let capacity = psc.get_capacity();

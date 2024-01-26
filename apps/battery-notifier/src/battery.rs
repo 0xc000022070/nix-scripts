@@ -1,4 +1,5 @@
 use linuxver::version as get_linux_version;
+use serde::Deserialize;
 use std::{fmt, fs};
 
 pub const BATTERY_DANGER_PATH: &str = "./assets/battery-danger.png";
@@ -10,10 +11,11 @@ pub const WARN_BATTERY_SOUND: &[u8] = include_bytes!("./../assets/sounds/15.mp3"
 
 pub struct PowerSupplyClass {
     path: String,
+    debug: Option<DebugOptions>,
 }
 
 impl PowerSupplyClass {
-    pub fn new() -> PowerSupplyClass {
+    pub fn new(debug_file_path: Option<String>) -> PowerSupplyClass {
         let kernel_version = get_linux_version().expect("must use a Linux kernel");
         if kernel_version.major == 2 && kernel_version.minor < 6 {
             panic!("This program requires Linux 2.6 or higher");
@@ -34,10 +36,15 @@ impl PowerSupplyClass {
 
         PowerSupplyClass {
             path: format!("/sys/class/power_supply/{}", class),
+            debug: debug_file_path.map(DebugOptions::parse),
         }
     }
 
     pub fn get_capacity(&self) -> u8 {
+        if self.debug.is_some() {
+            return self.debug.as_ref().unwrap().from.capacity;
+        }
+
         let raw_capacity: String = fs::read_to_string(self.get_capacity_path())
             .expect("Read battery capacity file")
             .replace("\n", "");
@@ -48,6 +55,10 @@ impl PowerSupplyClass {
     }
 
     pub fn get_status(&self) -> String {
+        if self.debug.is_some() {
+            return self.debug.as_ref().unwrap().from.status.to_owned();
+        }
+
         fs::read_to_string(self.get_status_path())
             .expect("Read battery status file")
             .replace("\n", "")
@@ -78,19 +89,6 @@ impl Urgency {
         }
     }
 }
-
-// impl str::FromStr for Urgency {
-//     type Err = ();
-
-//     fn from_str(input: &str) -> Result<Urgency, Self::Err> {
-//         match input {
-//             "CRITICAL" => Ok(Urgency::CRITICAL),
-//             "NORMAL" => Ok(Urgency::NORMAL),
-//             "LOW" => Ok(Urgency::LOW),
-//             _ => Err(()),
-//         }
-//     }
-// }
 
 impl fmt::Display for Urgency {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -123,19 +121,24 @@ impl fmt::Display for BatteryNotificationLevel {
     }
 }
 
+#[derive(Deserialize)]
 struct DebugState {
     status: String,
     capacity: u8,
 }
 
+#[derive(Deserialize)]
 pub struct DebugOptions {
     from: DebugState,
     to: DebugState,
     space_between: u32,
 }
 
-// impl DebugOptions {
-//     pub fn parse() -> Self {
+impl DebugOptions {
+    pub fn parse(debug_file_path: String) -> Self {
+        let content = fs::read_to_string(debug_file_path).expect("read file path");
+        let options: DebugOptions = serde_yaml::from_str(&content).expect("parse debug file");
 
-//     }
-// }
+        options
+    }
+}
