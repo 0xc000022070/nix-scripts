@@ -13,8 +13,6 @@ in
     nativeBuildInputs = with pkgs; [git cmake makeWrapper];
     buildInputs = runtimePackages;
 
-    # buildInputs = with pkgs; [miniaudio];
-
     cargoLock = {
       lockFile = ./Cargo.lock;
 
@@ -24,11 +22,8 @@ in
     };
 
     preConfigure = ''
-      substituteInPlace ./src/main.rs \
-      --replace './../assets' $src/assets
-
-      substituteInPlace ./src/main.rs \
-        --replace './assets' '${placeholder "out"}/assets'
+      substituteInPlace ./src/notify.rs \
+      --replace './assets/battery-danger.png' '${placeholder "out"}/assets/battery-danger.png'
     '';
 
     preInstall = ''
