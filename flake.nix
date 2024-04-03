@@ -5,7 +5,7 @@
     systems.url = "github:nix-systems/default-linux";
   };
 
-  outputs = inputs @ {
+  outputs = {
     self,
     poetry2nix,
     systems,
@@ -19,7 +19,7 @@
       });
 
     eachSystem = lib.genAttrs (import systems);
-  in rec {
+  in {
     packages = eachSystem (system: let
       pkgs = pkgsFor.${system};
 
@@ -27,7 +27,7 @@
         dunstify-brightness = ./apps/dunstify-brightness;
         screen-capture-x11 = ./apps/screen-capture-x11;
         playerctl-waybar = ./apps/playerctl-waybar;
-        dunstify-sound = ./apps/dunstify-sound;
+        sys-sound = ./apps/sys-sound;
         cliphist-rofi = ./apps/cliphist-rofi;
         swww-switcher = ./apps/swww-switcher;
         spotify-dbus = ./apps/spotify-dbus;
@@ -37,7 +37,7 @@
       };
     in
       {
-        default = self.packages.${system}.rofi-radio;
+        default = self.packages.${system}.sys-sound;
       }
       // lib.attrsets.mapAttrs (_n: p:
         pkgs.callPackage p {

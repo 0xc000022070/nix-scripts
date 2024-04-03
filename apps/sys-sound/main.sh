@@ -2,7 +2,7 @@
 
 ASSETS_PATH="path/to/assets"
 
-PROGRAM_NAME="dunstify-sound"
+PROGRAM_NAME="sys-sound"
 LEVEL_OFFSET=4
 
 SOURCE_TAG="string:x-dunst-stack-tag:source"

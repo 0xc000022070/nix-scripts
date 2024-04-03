@@ -13,7 +13,7 @@ in
     ];
   in
     pkgs.stdenv.mkDerivation rec {
-      name = "dunstify-sound";
+      name = "sys-sound";
 
       src = builtins.path {
         name = "${name}-source";
