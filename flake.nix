@@ -1,8 +1,11 @@
 {
   inputs = {
-    nixpkgs.url = "nixpkgs";
-    poetry2nix.url = "github:nix-community/poetry2nix";
     systems.url = "github:nix-systems/default-linux";
+    poetry2nix = {
+      url = "github:nix-community/poetry2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "nixpkgs";
   };
 
   outputs = {
