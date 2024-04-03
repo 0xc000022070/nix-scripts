@@ -5,7 +5,7 @@
   ];
 in
   pkgs.stdenv.mkDerivation rec {
-    name = "dunstify-brightness";
+    name = "sys-brightness";
 
     src = builtins.path {
       name = "${name}-source";

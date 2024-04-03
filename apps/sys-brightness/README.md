@@ -1,4 +1,4 @@
-# Dunstify brightness
+# System brightness
 
 Icons retrieved from [Archive IonIcons](https://www.iconarchive.com/show/ionicons-icons-by-ionic.html).
 

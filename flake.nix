@@ -27,7 +27,7 @@
       pkgs = pkgsFor.${system};
 
       entries = {
-        dunstify-brightness = ./apps/dunstify-brightness;
+        sys-brightness = ./apps/sys-brightness;
         screen-capture-x11 = ./apps/screen-capture-x11;
         playerctl-waybar = ./apps/playerctl-waybar;
         sys-sound = ./apps/sys-sound;
@@ -40,7 +40,7 @@
       };
     in
       {
-        default = self.packages.${system}.sys-sound;
+        default = self.packages.${system}.sys-brightness;
       }
       // lib.attrsets.mapAttrs (_n: p:
         pkgs.callPackage p {

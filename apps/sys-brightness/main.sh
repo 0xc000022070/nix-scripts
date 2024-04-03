@@ -2,7 +2,7 @@
 
 ASSETS_PATH="path/to/assets"
 
-PROGRAM_NAME="dunstify-brightness"
+PROGRAM_NAME="sys-brightness"
 LEVEL_OFFSET=4
 
 BRIGHTNESS_TAG="string:x-dunst-stack-tag:brightness"
