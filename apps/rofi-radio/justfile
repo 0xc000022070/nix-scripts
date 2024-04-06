@@ -1,3 +1,0 @@
-
-run:
-    @ROFI_RADIO_ROFI_CFG=./etc/config.rasi ROFI_RADIO_CFG=./etc/config.yaml go run .
