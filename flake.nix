@@ -31,6 +31,7 @@
         screen-capture-x11 = ./apps/screen-capture-x11;
         playerctl-waybar = ./apps/playerctl-waybar;
         sys-sound = ./apps/sys-sound;
+        batlimit = ./apps/batlimit;
         cliphist-rofi = ./apps/cliphist-rofi;
         swww-switcher = ./apps/swww-switcher;
         spotify-dbus = ./apps/spotify-dbus;
