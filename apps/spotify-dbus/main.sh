@@ -2,16 +2,19 @@
 
 # https://www.reddit.com/r/i3wm/comments/2bhhog/mediakeys_spotify_for_noobs/
 
+DESTINY="org.mpris.MediaPlayer2.spotify"
+MESSAGE_PATH="/org/mpris/MediaPlayer2"
+
 get_raw_position() {
     dbus-send --print-reply \
-        --dest="org.mpris.MediaPlayer2.spotify" "/org/mpris/MediaPlayer2" \
+        --dest="$DESTINY" "/org/mpris/MediaPlayer2" \
         "org.freedesktop.DBus.Properties.Get" string:"org.mpris.MediaPlayer2.Player" string:"Position" |
         sort -r | head -n 1 | awk '{print $3}'
 }
 
 get_raw_track_id() {
     dbus-send --print-reply \
-        --dest="org.mpris.MediaPlayer2.spotify" "/org/mpris/MediaPlayer2" \
+        --dest="$DESTINY" "/org/mpris/MediaPlayer2" \
         "org.freedesktop.DBus.Properties.Get" string:"org.mpris.MediaPlayer2.Player" string:"Metadata" |
         grep --after-context=1 'mpris:trackid' | sort -r | head -n 1 | awk -F'"' '{print $2}'
 }
@@ -19,29 +22,31 @@ get_raw_track_id() {
 set_position() {
     new_position="$1"
 
-    dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 \
+    dbus-send --print-reply --dest="$DESTINY" /org/mpris/MediaPlayer2 \
         org.mpris.MediaPlayer2.Player.SetPosition "objpath:$(get_raw_track_id)" "int64:$new_position"
+}
+
+send_command_via_dbus() {
+    name="$1"
+
+    dbus-send --print-reply --dest="$DESTINY" "$MESSAGE_PATH" "org.mpris.MediaPlayer2.Player.$name"
 }
 
 PROGRAM_NAME="spotify-dbus"
 
-DESTINY="org.mpris.MediaPlayer2.spotify"
-
 main() {
-    COMMAND=""
-
     case "$1" in
     --next)
-        COMMAND="Next"
+        send_command_via_dbus "Next"
         ;;
     --prev | --previous)
-        COMMAND="Previous"
+        send_command_via_dbus "Previous"
         ;;
     --toggle)
-        COMMAND="PlayPause"
+        send_command_via_dbus "PlayPause"
         ;;
     --stop)
-        COMMAND="Stop"
+        send_command_via_dbus "Stop"
         ;;
     --push-back)
         position=$(get_raw_position)
@@ -73,11 +78,6 @@ main() {
         exit 1
         ;;
     esac
-
-    MESSAGE="org.mpris.MediaPlayer2.Player.$COMMAND"
-    MESSAGE_PATH=""
-
-    dbus-send --print-reply --dest="$DESTINY" "$MESSAGE_PATH" "$MESSAGE"
 }
 
 main "$@"
