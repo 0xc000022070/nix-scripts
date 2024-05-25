@@ -34,7 +34,6 @@
         batlimit = ./apps/batlimit;
         cliphist-rofi = ./apps/cliphist-rofi;
         swww-switcher = ./apps/swww-switcher;
-        spotify-dbus = ./apps/spotify-dbus;
         nixgrep = ./apps/nixgrep;
         mullx = ./apps/mullx;
       };
