@@ -4,9 +4,9 @@ synopsis: "A simple mullvad wrapper to extend functionality"
 description: "A simple mullvad wrapper to extend functionality"
 maintainer: ["Luis Quiñones Requelme"]
 authors: ["Luis Quiñones Requelme"]
-tags: ["topics" "to describe" "your" "project"]
+tags: ["wayland" "window-manager" "desktop" "vpn" "mullvad"]
 homepage: "https://github.com/luisnquin/nix-scripts"
-doc: "https://url/to/documentation"
+doc: "https://github.com/luisnquin/nix-scripts"
 bug-reports: "https://github.com/luisnquin/nix-scripts/issues"
 depends: [
   "ocaml"
