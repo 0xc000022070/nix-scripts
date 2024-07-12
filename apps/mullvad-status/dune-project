@@ -5,7 +5,7 @@
 (generate_opam_files true)
 
 (source
- (github luisnquin/scripts))
+ (github luisnquin/nix-scripts))
 
 (authors "Luis Quiñones Requelme")
 
