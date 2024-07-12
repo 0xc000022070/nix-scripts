@@ -64,14 +64,14 @@ let get_mullvad_status () =
     }
   else
     {
-      server_id = "none";
-      tunnel_type = "unknown";
+      server_id = "no vpn";
+      tunnel_type = "no vpn";
       connection;
-      network_ip = "none";
-      network_port = "none";
-      network_proto = "none";
-      city = "unknown";
-      country = "unknown";
+      network_ip = "no vpn";
+      network_port = "no vpn";
+      network_proto = "no vpn";
+      city = "none";
+      country = "none";
     }
 
 let get_formatted_status out_kind format =
