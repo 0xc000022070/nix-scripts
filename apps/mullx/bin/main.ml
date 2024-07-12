@@ -94,7 +94,7 @@ let get_formatted_status out_kind format =
     let emoji =
       match status.connection with
       | "connected" -> "󰠥"
-      | "disconnected" -> "󱑘"
+      | "disconnected" -> "󱔑"
       | "disconnecting" -> ""
       | _ -> "󰦅"
     in
