@@ -1,0 +1,4 @@
+(library
+ (name mullvad_status)
+ (public_name mullvad_status)
+ (libraries unix str))

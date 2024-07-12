@@ -1,0 +1,4 @@
+(executable
+ (public_name mullvad_status)
+ (name main)
+ (libraries mullvad_status))

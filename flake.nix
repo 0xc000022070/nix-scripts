@@ -35,11 +35,11 @@
         cliphist-rofi = ./apps/cliphist-rofi;
         swww-switcher = ./apps/swww-switcher;
         nixgrep = ./apps/nixgrep;
-        mullx = ./apps/mullx;
+        mullvad-status = ./apps/mullvad-status;
       };
     in
       {
-        default = self.packages.${system}.sys-brightness;
+        default = self.packages.${system}.mullvad-status;
       }
       // lib.attrsets.mapAttrs (_n: p:
         pkgs.callPackage p {
