@@ -1,5 +1,5 @@
 type mullvad_status = {
-  server_id : string;
+  relay_id : string;
   tunnel_type : string;
   connection : string;
   network_ip : string;
@@ -53,7 +53,7 @@ let get_mullvad_status () =
     in
 
     {
-      server_id = List.nth frags1 2;
+      relay_id = List.nth frags1 2;
       tunnel_type;
       connection;
       network_ip = List.nth network_frags 0;
@@ -64,7 +64,7 @@ let get_mullvad_status () =
     }
   else
     {
-      server_id = "no vpn";
+      relay_id = "no vpn";
       tunnel_type = "no vpn";
       connection;
       network_ip = "no vpn";
@@ -81,7 +81,7 @@ let get_formatted_status out_kind format =
   and placeholders =
     [
       "{{emoji}}";
-      "{{server-id}}";
+      "{{relay-id}}";
       "{{city}}";
       "{{country}}";
       "{{connection}}";
@@ -100,7 +100,7 @@ let get_formatted_status out_kind format =
     in
     [
       emoji;
-      status.server_id;
+      status.relay_id;
       status.city;
       status.country;
       status.connection;
@@ -125,7 +125,7 @@ let get_formatted_status out_kind format =
   | "waybar" ->
       let tooltip =
         let tooltip_format =
-          "{{country}}, {{city}} - {{server-id}} \
+          "{{country}}, {{city}} - {{relay-id}} \
            ({{network-ip}}:{{network-port}}/{{network-proto}})"
         in
 
