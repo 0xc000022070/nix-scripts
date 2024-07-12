@@ -6,7 +6,6 @@ self: {
 }:
 with lib; let
   inherit (pkgs.stdenv.hostPlatform) system;
-  tomlFormat = pkgs.formats.toml {};
 
   flake-pkgs = self.packages.${system};
 in {
