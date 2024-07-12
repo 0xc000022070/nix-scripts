@@ -1,0 +1,22 @@
+name: Deadnix
+on: [push, pull_request]
+jobs:
+  deadnix-job:
+    runs-on: ubuntu-latest
+    env:
+      committer_name: Antigen
+      committer_email: antigen.bot0@gmail.com
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v22
+      - uses: cachix/cachix-action@v12
+        with:
+          name: deadnix
+
+      - uses: luisnquin/deadnix-action@main
+        with:
+          author: ${{env.committer_name}} <${{env.committer_email}}>
+          committer: ${{env.committer_name}} <${{env.committer_email}}>
+          commit_message: "deadnix: removed dead code"
