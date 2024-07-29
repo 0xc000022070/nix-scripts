@@ -29,7 +29,7 @@
       entries = {
         sys-brightness = ./apps/sys-brightness;
         screen-capture-x11 = ./apps/screen-capture-x11;
-        playerctl-waybar = ./apps/playerctl-waybar;
+        # playerctl-waybar = ./apps/playerctl-waybar;
         sys-sound = ./apps/sys-sound;
         batlimit = ./apps/batlimit;
         cliphist-rofi = ./apps/cliphist-rofi;
