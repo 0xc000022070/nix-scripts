@@ -22,7 +22,8 @@ batlimit() {
         return 1
     fi
 
-    printf '\033[38;2;92;94;93mOld: \033[0m%s  \033[38;2;39;219;129mNew: \033[0m%s\n' "$current_limit" "$new_limit"
+    printf "OLD THRESHOLD: %s\n" "$current_limit"
+    printf "NEW THRESHOLD: %s\n" "$new_limit"
 }
 
 main() {
