@@ -29,6 +29,7 @@
       entries = {
         sys-brightness = ./apps/sys-brightness;
         screen-capture-x11 = ./apps/screen-capture-x11;
+        nmcli-wifi-scan-waybar = ./apps/nmcli-wifi-scan-waybar;
         # playerctl-waybar = ./apps/playerctl-waybar;
         sys-sound = ./apps/sys-sound;
         batlimit = ./apps/batlimit;
@@ -39,7 +40,7 @@
       };
     in
       {
-        default = self.packages.${system}.mullvad-status;
+        default = self.packages.${system}.nmcli-wifi-scan-waybar;
       }
       // lib.attrsets.mapAttrs (_n: p:
         pkgs.callPackage p {
