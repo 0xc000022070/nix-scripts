@@ -10,10 +10,10 @@ batlimit() {
     current_limit=$(cat "$THRESHOLD_FILE")
 
     if [ "$new_limit" = '' ]; then
-        if [ "$current_limit" = '61' ]; then
+        if [ "$current_limit" = '71' ]; then
             new_limit='100'
         else
-            new_limit='61'
+            new_limit='71'
         fi
     fi
 
