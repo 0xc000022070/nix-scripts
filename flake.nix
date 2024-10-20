@@ -5,14 +5,19 @@
       url = "github:nix-community/poetry2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixgrep = {
+      url = "github:0xc000022070/nixgrep";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixpkgs.url = "nixpkgs";
   };
 
   outputs = {
-    self,
     poetry2nix,
     systems,
+    nixgrep,
     nixpkgs,
+    self,
   }: let
     inherit (nixpkgs) lib;
 
@@ -35,12 +40,13 @@
         batlimit = ./apps/batlimit;
         cliphist-rofi = ./apps/cliphist-rofi;
         swww-switcher = ./apps/swww-switcher;
-        nixgrep = ./apps/nixgrep;
         mullvad-status = ./apps/mullvad-status;
       };
     in
       {
-        default = self.packages.${system}.nmcli-wifi-scan-waybar;
+        default = (nixgrep.packages.${system}).nixgrep;
+
+        # inherit (nixgrep.packages.${system}) nixgrep;
       }
       // lib.attrsets.mapAttrs (_n: p:
         pkgs.callPackage p {
