@@ -46,7 +46,7 @@
       {
         default = (nixgrep.packages.${system}).nixgrep;
 
-        # inherit (nixgrep.packages.${system}) nixgrep;
+        inherit (nixgrep.packages.${system}) nixgrep;
       }
       // lib.attrsets.mapAttrs (_n: p:
         pkgs.callPackage p {
