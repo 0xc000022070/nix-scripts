@@ -25,4 +25,6 @@ pkgs.stdenv.mkDerivation rec {
 
     runHook postInstall
   '';
+
+  meta.mainProgram = name;
 }

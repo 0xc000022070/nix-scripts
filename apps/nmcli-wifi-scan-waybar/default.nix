@@ -34,7 +34,5 @@ in
         --prefix PATH : ${pkgs.lib.makeBinPath runtimePackages}
     '';
 
-    meta = {
-      mainProgram = name;
-    };
+    meta.mainProgram = name;
   }

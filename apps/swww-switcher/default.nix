@@ -20,4 +20,6 @@ in
       name = "${pname}-poetry.lock";
       path = ./poetry.lock;
     };
+
+    meta.mainProgram = pname;
   }

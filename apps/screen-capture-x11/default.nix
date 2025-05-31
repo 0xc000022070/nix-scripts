@@ -44,4 +44,6 @@ in
       wrapProgram ${placeholder "out"}/bin/${name} \
         --prefix PATH : ${pkgs.lib.makeBinPath runtimePackages}
     '';
+
+    meta.mainProgram = name;
   }
