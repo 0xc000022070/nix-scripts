@@ -35,7 +35,6 @@
         sys-brightness = ./apps/sys-brightness;
         screen-capture-x11 = ./apps/screen-capture-x11;
         nmcli-wifi-scan-waybar = ./apps/nmcli-wifi-scan-waybar;
-        # playerctl-waybar = ./apps/playerctl-waybar;
         sys-sound = ./apps/sys-sound;
         batlimit = ./apps/batlimit;
         cliphist-rofi = ./apps/cliphist-rofi;
