@@ -1,6 +1,7 @@
 {
   pkgs ? import <nixpkgs> {},
   powerSupplyBatteryPath ? "/sys/class/power_supply/BAT1",
+  safeChargeLimit ? 71,
   ...
 }:
 pkgs.stdenv.mkDerivation rec {
@@ -13,7 +14,8 @@ pkgs.stdenv.mkDerivation rec {
 
   postPatch = ''
     substituteInPlace ./main.sh \
-      --replace '/sys/class/power_supply/BAT1' '${powerSupplyBatteryPath}'
+      --replace '/sys/class/power_supply/BAT1' '${powerSupplyBatteryPath}' \
+      --replace 'SAFE_CHARGE_LIMIT="71"' 'SAFE_CHARGE_LIMIT="${builtins.toString safeChargeLimit}"'
   '';
 
   installPhase = ''
