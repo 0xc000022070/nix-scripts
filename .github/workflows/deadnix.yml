@@ -8,10 +8,10 @@ jobs:
       committer_email: antigen.bot0@gmail.com
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - uses: cachix/install-nix-action@v22
-      - uses: cachix/cachix-action@v12
+      - uses: cachix/install-nix-action@v31
+      - uses: cachix/cachix-action@v16
         with:
           name: deadnix
 
