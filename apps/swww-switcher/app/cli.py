@@ -23,7 +23,7 @@ def switch(wallpapers: List[str]) -> None:
 
     result: str = subprocess.check_output(['swww', 'query']).decode('ascii')
 
-    current_wallpaper_path: str = result.split()[7]
+    current_wallpaper_path: str = result.split()[-1]
 
     print(current_wallpaper_path)
     print(wallpapers)
