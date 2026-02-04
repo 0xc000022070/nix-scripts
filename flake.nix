@@ -1,15 +1,20 @@
 {
   inputs = {
+    nixpkgs.url = "nixpkgs";
     systems.url = "github:nix-systems/default-linux";
     poetry2nix = {
       url = "github:nix-community/poetry2nix";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs = {
+        systems.follows = "systems";
+        nixpkgs.follows = "nixpkgs";
+        nix-github-actions.follows = "";
+        treefmt-nix.follows = "";
+      };
     };
     nixgrep = {
       url = "github:0xc000022070/nixgrep";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixpkgs.url = "nixpkgs";
   };
 
   outputs = {
