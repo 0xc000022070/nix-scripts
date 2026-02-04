@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
     systems.url = "github:nix-systems/default-linux";
     poetry2nix = {
       url = "github:nix-community/poetry2nix";
@@ -9,6 +10,7 @@
         nixpkgs.follows = "nixpkgs";
         nix-github-actions.follows = "";
         treefmt-nix.follows = "";
+        flake-utils.follows = "flake-utils";
       };
     };
     nixgrep = {
@@ -23,6 +25,7 @@
     nixgrep,
     nixpkgs,
     self,
+    ...
   }: let
     inherit (nixpkgs) lib;
 
