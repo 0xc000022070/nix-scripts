@@ -3,16 +3,6 @@
     nixpkgs.url = "nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
     systems.url = "github:nix-systems/default-linux";
-    poetry2nix = {
-      url = "github:nix-community/poetry2nix";
-      inputs = {
-        systems.follows = "systems";
-        nixpkgs.follows = "nixpkgs";
-        nix-github-actions.follows = "";
-        treefmt-nix.follows = "";
-        flake-utils.follows = "flake-utils";
-      };
-    };
     nixgrep = {
       url = "github:0xc000022070/nixgrep";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -20,7 +10,6 @@
   };
 
   outputs = {
-    poetry2nix,
     systems,
     nixgrep,
     nixpkgs,
@@ -35,7 +24,7 @@
       });
 
     eachSystem = lib.genAttrs (import systems);
-  in {
+  in rec {
     packages = eachSystem (system: let
       pkgs = pkgsFor.${system};
 
@@ -51,15 +40,11 @@
       };
     in
       {
-        default = (nixgrep.packages.${system}).nixgrep;
+        default = packages.${system}.swww-switcher;
 
         inherit (nixgrep.packages.${system}) nixgrep;
       }
-      // lib.attrsets.mapAttrs (_n: p:
-        pkgs.callPackage p {
-          inherit (poetry2nix.lib.mkPoetry2Nix {inherit pkgs;}) mkPoetryApplication;
-          inherit pkgs;
-        })
+      // lib.attrsets.mapAttrs (_n: p: pkgs.callPackage p {inherit pkgs;})
       entries);
 
     homeManagerModules.default = import ./nix/hm-module.nix self;

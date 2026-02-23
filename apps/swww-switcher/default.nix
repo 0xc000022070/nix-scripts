@@ -1,25 +1,19 @@
-{
-  mkPoetryApplication,
-  pkgs,
-  ...
-}: let
+{pkgs, ...}: let
   pname = "swww-switcher";
+  py = pkgs.python313;
 in
-  mkPoetryApplication {
-    python = pkgs.python311;
+  py.pkgs.buildPythonApplication rec {
+    inherit pname;
+    version = "0.1.1";
 
-    projectDir = builtins.path {
+    src = builtins.path {
       name = "${pname}-source";
       path = ./.;
     };
-    pyproject = builtins.path {
-      name = "${pname}-pyproject.toml";
-      path = ./pyproject.toml;
-    };
-    poetrylock = builtins.path {
-      name = "${pname}-poetry.lock";
-      path = ./poetry.lock;
-    };
 
-    meta.mainProgram = pname;
+    pyproject = true;
+    build-system = [py.pkgs.setuptools];
+    dependencies = [py.pkgs.autopep8];
+
+    meta.mainProgram = "cli";
   }

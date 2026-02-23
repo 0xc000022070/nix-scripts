@@ -1,18 +1,17 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "app"
 version = "0.1.0"
 description = ""
-authors = ["Luis Quiñones Requelme <lpaandres2020@gmail.com>"]
-packages = [{include = "app"}]
+dependencies = [
+  "autopep8>=2.0.4",
+]
 
-[tool.poetry.scripts]
+[project.scripts]
 cli = "app.cli:main"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-autopep8 = "^2.0.4"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.setuptools.packages.find]
+include = ["app*"]
