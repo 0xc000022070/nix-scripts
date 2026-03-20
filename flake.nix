@@ -1,7 +1,6 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs";
-    flake-utils.url = "github:numtide/flake-utils";
     systems.url = "github:nix-systems/default-linux";
     nixgrep = {
       url = "github:0xc000022070/nixgrep";
