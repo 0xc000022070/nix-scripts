@@ -24,20 +24,30 @@
       });
 
     eachSystem = lib.genAttrs (import systems);
+
+    entries = {
+      sys-brightness = ./apps/sys-brightness;
+      screen-capture-x11 = ./apps/screen-capture-x11;
+      nmcli-wifi-scan-waybar = ./apps/nmcli-wifi-scan-waybar;
+      sys-sound = ./apps/sys-sound;
+      batlimit = ./apps/batlimit;
+      cliphist-rofi = ./apps/cliphist-rofi;
+      swww-switcher = ./apps/swww-switcher;
+      mullvad-status = ./apps/mullvad-status;
+    };
   in rec {
+    overlays.default = final: prev: {
+      scripts =
+        lib.attrsets.mapAttrs (_n: p: final.callPackage p {}) entries
+        // {
+          inherit (nixgrep.packages.${prev.system}) nixgrep;
+        };
+    };
+
+    overlay = overlays.default;
+
     packages = eachSystem (system: let
       pkgs = pkgsFor.${system};
-
-      entries = {
-        sys-brightness = ./apps/sys-brightness;
-        screen-capture-x11 = ./apps/screen-capture-x11;
-        nmcli-wifi-scan-waybar = ./apps/nmcli-wifi-scan-waybar;
-        sys-sound = ./apps/sys-sound;
-        batlimit = ./apps/batlimit;
-        cliphist-rofi = ./apps/cliphist-rofi;
-        swww-switcher = ./apps/swww-switcher;
-        mullvad-status = ./apps/mullvad-status;
-      };
     in
       {
         default = packages.${system}.swww-switcher;
