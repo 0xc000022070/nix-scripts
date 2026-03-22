@@ -2,15 +2,10 @@
   inputs = {
     nixpkgs.url = "nixpkgs";
     systems.url = "github:nix-systems/default-linux";
-    nixgrep = {
-      url = "github:0xc000022070/nixgrep";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
     systems,
-    nixgrep,
     nixpkgs,
     self,
     ...
@@ -37,10 +32,7 @@
   in rec {
     overlays.default = final: prev: {
       scripts =
-        lib.attrsets.mapAttrs (_n: p: final.callPackage p {}) entries
-        // {
-          inherit (nixgrep.packages.${prev.system}) nixgrep;
-        };
+        lib.attrsets.mapAttrs (_n: p: final.callPackage p {}) entries;
     };
 
     overlay = overlays.default;
@@ -50,8 +42,6 @@
     in
       {
         default = packages.${system}.swww-switcher;
-
-        inherit (nixgrep.packages.${system}) nixgrep;
       }
       // lib.attrsets.mapAttrs (_n: p: pkgs.callPackage p {inherit pkgs;})
       entries);
