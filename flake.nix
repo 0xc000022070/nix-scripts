@@ -30,7 +30,7 @@
       mullvad-status = ./apps/mullvad-status;
     };
   in rec {
-    overlays.default = final: prev: {
+    overlays.default = final: _prev: {
       scripts =
         lib.attrsets.mapAttrs (_n: p: final.callPackage p {}) entries;
     };
