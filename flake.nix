@@ -26,7 +26,7 @@
       sys-sound = ./apps/sys-sound;
       batlimit = ./apps/batlimit;
       cliphist-rofi = ./apps/cliphist-rofi;
-      swww-switcher = ./apps/swww-switcher;
+      awww-switcher = ./apps/awww-switcher;
       mullvad-status = ./apps/mullvad-status;
     };
   in rec {
@@ -41,7 +41,7 @@
       pkgs = pkgsFor.${system};
     in
       {
-        default = packages.${system}.swww-switcher;
+        default = packages.${system}.awww-switcher;
       }
       // lib.attrsets.mapAttrs (_n: p: pkgs.callPackage p {inherit pkgs;})
       entries);

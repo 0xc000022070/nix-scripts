@@ -21,7 +21,7 @@ def switch(wallpapers: List[str]) -> None:
     if len(wallpapers) == 0:
         print('no wallpapers has been specified', file=stderr)
 
-    result: str = subprocess.check_output(['swww', 'query']).decode('ascii')
+    result: str = subprocess.check_output(['awww', 'query']).decode('ascii')
 
     current_wallpaper_path: str = result.split()[-1]
 
@@ -43,7 +43,7 @@ def switch(wallpapers: List[str]) -> None:
 
     print(f'next wallpaper path is {next_wallpaper_path}...')
 
-    system(f"swww img {next_wallpaper_path}")
+    system(f"awww img {next_wallpaper_path}")
 
 
 def main():

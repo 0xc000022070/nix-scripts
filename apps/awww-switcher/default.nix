@@ -1,5 +1,5 @@
 {pkgs, ...}: let
-  pname = "swww-switcher";
+  pname = "awww-switcher";
   py = pkgs.python313;
 in
   py.pkgs.buildPythonApplication rec {
